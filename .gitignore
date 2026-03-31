@@ -15,6 +15,7 @@ dist-ssr
 # Editor directories and files
 .vscode
 .github
+.agents
 opencode.json
 .idea
 .DS_Store
