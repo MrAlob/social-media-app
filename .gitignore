@@ -16,6 +16,8 @@ dist-ssr
 .vscode
 .github
 .agents
+.tmp
+.env
 opencode.json
 .idea
 .DS_Store
