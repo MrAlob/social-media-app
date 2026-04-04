@@ -9,3 +9,14 @@ export function clearAuthData() {
 	localStorage.removeItem("userName");
 	localStorage.removeItem("userEmail");
 }
+
+export function getAccessToken() {
+	return localStorage.getItem("accessToken") || "";
+}
+
+export function getCurrentUser() {
+	return {
+		name: localStorage.getItem("userName") || "",
+		email: localStorage.getItem("userEmail") || "",
+	};
+}
