@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://v2.api.noroff.dev";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 function toStudEmail(usernameOrEmail) {
 	const value = usernameOrEmail.trim();
