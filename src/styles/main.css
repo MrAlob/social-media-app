@@ -49,7 +49,11 @@ body {
 	color: #000000;
 	padding: 0.7rem 0.8rem;
 	font-size: 1rem;
-	outline: none;
+}
+
+.field-input:focus-visible {
+	outline: 2px solid #ffffff;
+	outline-offset: 2px;
 }
 
 .field-error {
@@ -103,6 +107,121 @@ body {
 .register-link {
 	color: #ffffff;
 	font-weight: 700;
+}
+
+.feed-page {
+	min-height: 100vh;
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 1rem;
+}
+
+.feed-topbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1rem;
+}
+
+.feed-title {
+	margin: 0;
+	font-size: 1.6rem;
+	color: #111111;
+}
+
+.feed-subtitle {
+	margin: 0.2rem 0 0;
+	color: #444444;
+	font-size: 0.95rem;
+}
+
+.logout-button {
+	border: 1px solid #111111;
+	background: #ffffff;
+	color: #111111;
+	padding: 0.5rem 0.8rem;
+	font-weight: 700;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.feed-message {
+	margin: 0.3rem 0 1rem;
+	color: #444444;
+	min-height: 1.2rem;
+}
+
+.feed-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 1rem;
+}
+
+.post-card {
+	border: 1px solid #dddddd;
+	border-radius: 8px;
+	padding: 1rem;
+	background: #ffffff;
+}
+
+.post-header {
+	display: flex;
+	justify-content: space-between;
+	gap: 0.5rem;
+	margin-bottom: 0.5rem;
+	font-size: 0.85rem;
+	color: #666666;
+}
+
+.post-author {
+	margin: 0;
+	font-weight: 700;
+	color: #111111;
+}
+
+.post-date {
+	margin: 0;
+}
+
+.post-title {
+	margin: 0 0 0.4rem;
+	font-size: 1.1rem;
+	color: #111111;
+}
+
+.post-body {
+	margin: 0 0 0.75rem;
+	color: #333333;
+	line-height: 1.4;
+}
+
+.post-media {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: 6px;
+	margin-bottom: 0.7rem;
+	object-fit: cover;
+}
+
+.post-meta {
+	display: flex;
+	gap: 0.8rem;
+	font-size: 0.85rem;
+	color: #555555;
+}
+
+.load-more-button {
+	display: block;
+	margin: 1rem auto 0;
+	border: 1px solid #111111;
+	background: #111111;
+	color: #ffffff;
+	padding: 0.6rem 0.9rem;
+	font-weight: 700;
+	border-radius: 4px;
+	cursor: pointer;
 }
 
 @media (max-width: 520px) {
