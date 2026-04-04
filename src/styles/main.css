@@ -52,6 +52,13 @@ body {
 	outline: none;
 }
 
+.field-error {
+	margin: -0.35rem 0 0;
+	min-height: 1rem;
+	color: #ffb3b3;
+	font-size: 0.85rem;
+}
+
 .submit-button {
 	margin-top: 0.25rem;
 	width: 100%;
@@ -63,6 +70,39 @@ body {
 	font-size: 1rem;
 	padding: 0.7rem 0.8rem;
 	cursor: pointer;
+}
+
+.submit-button:disabled {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
+.form-message {
+	margin: 0.3rem 0 0;
+	min-height: 1rem;
+	font-size: 0.9rem;
+	text-align: center;
+	color: #ffffff;
+}
+
+.form-message.is-error {
+	color: #ffb3b3;
+}
+
+.form-message.is-success {
+	color: #b9ffb9;
+}
+
+.register-text {
+	margin: 1rem 0 0;
+	color: #ffffff;
+	font-size: 0.95rem;
+	text-align: center;
+}
+
+.register-link {
+	color: #ffffff;
+	font-weight: 700;
 }
 
 @media (max-width: 520px) {
