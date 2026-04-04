@@ -55,6 +55,7 @@ function getMediaUrl(media) {
 
 function renderPostCard(post) {
 	const mediaUrl = getMediaUrl(post.media);
+	const postId = escapeHtml(post.id);
 	const authorName = escapeHtml(post.author?.name || "Unknown");
 	const postDate = escapeHtml(formatDate(post.created));
 	const postTitle = escapeHtml(post.title || "Untitled post");
@@ -63,7 +64,7 @@ function renderPostCard(post) {
 	const reactionsCount = Number(post._count?.reactions || 0);
 
 	return `
-		<article class="post-card">
+		<article class="post-card" data-post-id="${postId}">
 			<div class="post-header">
 				<p class="post-author">${authorName}</p>
 				<p class="post-date">${postDate}</p>
@@ -75,6 +76,7 @@ function renderPostCard(post) {
 				<span>${commentsCount} comments</span>
 				<span>${reactionsCount} reactions</span>
 			</div>
+			<button class="post-open-button" type="button" data-post-id="${postId}">Open post</button>
 		</article>
 	`;
 }
@@ -118,6 +120,28 @@ export function renderFeedPage(rootElement) {
 	if (!feedGrid || !feedMessage || !loadMoreButton || !logoutButton) {
 		return;
 	}
+
+	feedGrid.addEventListener("click", (event) => {
+		const target = event.target;
+
+		if (!(target instanceof Element)) {
+			return;
+		}
+
+		const trigger = target.closest("[data-post-id]");
+
+		if (!trigger) {
+			return;
+		}
+
+		const postId = trigger.getAttribute("data-post-id");
+
+		if (!postId) {
+			return;
+		}
+
+		window.location.hash = `#post?id=${encodeURIComponent(postId)}`;
+	});
 
 	let currentPage = 1;
 	let isLastPage = false;
