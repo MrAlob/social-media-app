@@ -1,32 +1,21 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-
-function toStudEmail(usernameOrEmail) {
-	const value = usernameOrEmail.trim();
-
-	if (value.includes("@")) {
-		return value;
-	}
-
-	return `${value}@stud.noroff.no`;
-}
-
 export function validateLoginForm(formData) {
 	const errors = {};
 
-	if (!formData.usernameOrEmail || formData.usernameOrEmail.trim() === "") {
-		errors.usernameOrEmail = "Username or email is required";
+	if (!formData.email || formData.email.trim() === "") {
+		errors.email = "Email is required";
 	}
 
 	if (!formData.password || formData.password.trim() === "") {
 		errors.password = "Password is required";
 	}
 
-	const email = toStudEmail(formData.usernameOrEmail || "");
+	const email = (formData.email || "").trim();
 	const isStudEmail = /^[^\s@]+@stud\.noroff\.no$/i.test(email);
 
-	if (formData.usernameOrEmail && !isStudEmail) {
-		errors.usernameOrEmail = "Use a @stud.noroff.no email or username";
+	if (formData.email && !isStudEmail) {
+		errors.email = "Use a @stud.noroff.no email";
 	}
 
 	return {

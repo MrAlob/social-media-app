@@ -11,17 +11,17 @@ export function renderLoginPage(rootElement) {
 			<section class="login-card" aria-labelledby="login-title">
 				<h1 id="login-title" class="title">Log In</h1>
 				<form class="login-form" id="login-form" novalidate>
-					<label class="field-label" for="username">Username or Email</label>
+					<label class="field-label" for="email">Email</label>
 					<input
 						class="field-input"
-						id="username"
-						name="usernameOrEmail"
-						type="text"
-						autocomplete="username"
-						placeholder="username or name@stud.noroff.no"
+						id="email"
+						name="email"
+						type="email"
+						autocomplete="email"
+						placeholder="name@stud.noroff.no"
 						required
 					/>
-					<p class="field-error" data-error-for="usernameOrEmail" aria-live="polite"></p>
+					<p class="field-error" data-error-for="email" aria-live="polite"></p>
 
 					<label class="field-label" for="password">Password</label>
 					<input
@@ -48,11 +48,11 @@ export function renderLoginPage(rootElement) {
 	const loginForm = rootElement.querySelector("#login-form");
 	const submitButton = rootElement.querySelector("#login-submit");
 	const messageElement = rootElement.querySelector("#login-message");
-	const usernameError = rootElement.querySelector('[data-error-for="usernameOrEmail"]');
+	const emailError = rootElement.querySelector('[data-error-for="email"]');
 	const passwordError = rootElement.querySelector('[data-error-for="password"]');
 	const passwordInput = rootElement.querySelector("#password");
 
-	if (!loginForm || !submitButton || !messageElement || !usernameError || !passwordError || !passwordInput) {
+	if (!loginForm || !submitButton || !messageElement || !emailError || !passwordError || !passwordInput) {
 		return;
 	}
 
@@ -61,19 +61,19 @@ export function renderLoginPage(rootElement) {
 
 		messageElement.textContent = "";
 		messageElement.classList.remove("is-error", "is-success");
-		usernameError.textContent = "";
+		emailError.textContent = "";
 		passwordError.textContent = "";
 
 		const formData = new FormData(loginForm);
 		const loginData = {
-			usernameOrEmail: String(formData.get("usernameOrEmail") || "").trim(),
+			email: String(formData.get("email") || "").trim(),
 			password: String(formData.get("password") || ""),
 		};
 
 		const validation = validateLoginForm(loginData);
 
 		if (!validation.isValid) {
-			usernameError.textContent = validation.errors.usernameOrEmail || "";
+			emailError.textContent = validation.errors.email || "";
 			passwordError.textContent = validation.errors.password || "";
 			return;
 		}
