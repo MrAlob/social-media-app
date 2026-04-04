@@ -24,37 +24,56 @@ function truncateText(text, maxLength = 150) {
 	return `${value.slice(0, maxLength)}...`;
 }
 
+function escapeHtml(value) {
+	return String(value || "")
+		.replaceAll("&", "&amp;")
+		.replaceAll("<", "&lt;")
+		.replaceAll(">", "&gt;")
+		.replaceAll('"', "&quot;")
+		.replaceAll("'", "&#39;");
+}
+
 function getMediaUrl(media) {
-	if (!media) {
+	const rawUrl = typeof media === "string" ? media : media?.url;
+
+	if (!rawUrl) {
 		return "";
 	}
 
-	if (typeof media === "string") {
-		return media;
-	}
+	try {
+		const parsed = new URL(rawUrl);
 
-	if (typeof media === "object" && media.url) {
-		return media.url;
-	}
+		if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+			return "";
+		}
 
-	return "";
+		return parsed.toString();
+	} catch {
+		return "";
+	}
 }
 
 function renderPostCard(post) {
 	const mediaUrl = getMediaUrl(post.media);
+	const authorName = escapeHtml(post.author?.name || "Unknown");
+	const postDate = escapeHtml(formatDate(post.created));
+	const postTitle = escapeHtml(post.title || "Untitled post");
+	const postBody = escapeHtml(truncateText(post.body));
+	const commentsCount = Number(post._count?.comments || 0);
+	const reactionsCount = Number(post._count?.reactions || 0);
 
 	return `
 		<article class="post-card">
 			<div class="post-header">
-				<p class="post-author">${post.author?.name || "Unknown"}</p>
-				<p class="post-date">${formatDate(post.created)}</p>
+				<p class="post-author">${authorName}</p>
+				<p class="post-date">${postDate}</p>
 			</div>
-			<h2 class="post-title">${post.title || "Untitled post"}</h2>
-			<p class="post-body">${truncateText(post.body)}</p>
-			${mediaUrl ? `<img class="post-media" src="${mediaUrl}" alt="Post media" loading="lazy" />` : ""}
+			<h2 class="post-title">${postTitle}</h2>
+			<p class="post-body">${postBody}</p>
+			${mediaUrl ? `<img class="post-media" src="${mediaUrl}" alt="Post media" loading="lazy" width="640" height="360" />` : ""}
 			<div class="post-meta">
-				<span>${post._count?.comments || 0} comments</span>
-				<span>${post._count?.reactions || 0} reactions</span>
+				<span>${commentsCount} comments</span>
+				<span>${reactionsCount} reactions</span>
 			</div>
 		</article>
 	`;
@@ -73,13 +92,14 @@ export function renderFeedPage(rootElement) {
 	}
 
 	const currentUser = getCurrentUser();
+	const safeUserName = escapeHtml(currentUser.name || "User");
 
 	rootElement.innerHTML = `
 		<main class="feed-page">
 			<header class="feed-topbar">
 				<div>
 					<h1 class="feed-title">Feed</h1>
-					<p class="feed-subtitle">Logged in as ${currentUser.name || "User"}</p>
+					<p class="feed-subtitle">Logged in as ${safeUserName}</p>
 				</div>
 				<button class="logout-button" id="logout-button" type="button">Log Out</button>
 			</header>
@@ -149,7 +169,7 @@ export function renderFeedPage(rootElement) {
 		} catch (error) {
 			feedMessage.textContent = error.message || "Could not load feed.";
 
-			if ((error.message || "").toLowerCase().includes("unauthorized")) {
+			if (error.status === 401) {
 				clearAuthData();
 				window.location.hash = "#login";
 				return;
