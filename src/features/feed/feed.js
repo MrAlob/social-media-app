@@ -1,57 +1,6 @@
 import { fetchFeedPosts } from "../../services/api.js";
 import { clearAuthData, getAccessToken, getCurrentUser } from "../../services/storage.js";
-
-function formatDate(dateString) {
-	if (!dateString) {
-		return "Unknown date";
-	}
-
-	const date = new Date(dateString);
-	return date.toLocaleDateString(undefined, {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	});
-}
-
-function truncateText(text, maxLength = 150) {
-	const value = text || "";
-
-	if (value.length <= maxLength) {
-		return value;
-	}
-
-	return `${value.slice(0, maxLength)}...`;
-}
-
-function escapeHtml(value) {
-	return String(value || "")
-		.replaceAll("&", "&amp;")
-		.replaceAll("<", "&lt;")
-		.replaceAll(">", "&gt;")
-		.replaceAll('"', "&quot;")
-		.replaceAll("'", "&#39;");
-}
-
-function getMediaUrl(media) {
-	const rawUrl = typeof media === "string" ? media : media?.url;
-
-	if (!rawUrl) {
-		return "";
-	}
-
-	try {
-		const parsed = new URL(rawUrl);
-
-		if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-			return "";
-		}
-
-		return parsed.toString();
-	} catch {
-		return "";
-	}
-}
+import { escapeHtml, formatDate, getMediaUrl, truncateText } from "../../utils/format.js";
 
 function renderPostCard(post) {
 	const mediaUrl = getMediaUrl(post.media);

@@ -7,6 +7,24 @@ import { getAccessToken } from "./services/storage.js";
 
 const app = document.querySelector("#app");
 
+const routes = [
+	{
+		matches: (hash) => hash === "#register",
+		requiresAuth: false,
+		render: (rootElement) => renderRegisterPage(rootElement),
+	},
+	{
+		matches: (hash) => hash === "#feed",
+		requiresAuth: true,
+		render: (rootElement) => renderFeedPage(rootElement),
+	},
+	{
+		matches: (hash) => hash.startsWith("#post"),
+		requiresAuth: true,
+		render: (rootElement) => renderPostDetailPage(rootElement, getPostIdFromHash()),
+	},
+];
+
 function getPostIdFromHash() {
 	const hashValue = window.location.hash || "";
 
@@ -19,37 +37,37 @@ function getPostIdFromHash() {
 	return params.get("id") || "";
 }
 
+function getMatchingRoute(hash) {
+	return routes.find((route) => route.matches(hash)) || null;
+}
+
+function canAccessRoute(route) {
+	if (!route?.requiresAuth) {
+		return true;
+	}
+
+	return Boolean(getAccessToken());
+}
+
 function renderCurrentPage() {
 	if (!app) {
 		return;
 	}
 
-	if (window.location.hash === "#register") {
-		renderRegisterPage(app);
+	const hash = window.location.hash || "#login";
+	const route = getMatchingRoute(hash);
+
+	if (!route) {
+		renderLoginPage(app);
 		return;
 	}
 
-	if (window.location.hash === "#feed") {
-		if (!getAccessToken()) {
-			window.location.hash = "#login";
-			return;
-		}
-
-		renderFeedPage(app);
+	if (!canAccessRoute(route)) {
+		window.location.hash = "#login";
 		return;
 	}
 
-	if (window.location.hash.startsWith("#post")) {
-		if (!getAccessToken()) {
-			window.location.hash = "#login";
-			return;
-		}
-
-		renderPostDetailPage(app, getPostIdFromHash());
-		return;
-	}
-
-	renderLoginPage(app);
+	route.render(app);
 }
 
 window.addEventListener("hashchange", renderCurrentPage);
