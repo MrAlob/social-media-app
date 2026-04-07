@@ -1,50 +1,6 @@
 import { fetchPostById } from "../../services/api.js";
 import { clearAuthData, getAccessToken } from "../../services/storage.js";
-
-function escapeHtml(value) {
-	return String(value || "")
-		.replaceAll("&", "&amp;")
-		.replaceAll("<", "&lt;")
-		.replaceAll(">", "&gt;")
-		.replaceAll('"', "&quot;")
-		.replaceAll("'", "&#39;");
-}
-
-function formatDateTime(dateString) {
-	if (!dateString) {
-		return "Unknown date";
-	}
-
-	const date = new Date(dateString);
-
-	return date.toLocaleString(undefined, {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-	});
-}
-
-function getMediaUrl(media) {
-	const rawUrl = typeof media === "string" ? media : media?.url;
-
-	if (!rawUrl) {
-		return "";
-	}
-
-	try {
-		const parsed = new URL(rawUrl);
-
-		if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-			return "";
-		}
-
-		return parsed.toString();
-	} catch {
-		return "";
-	}
-}
+import { escapeHtml, formatDateTime, getMediaUrl } from "../../utils/format.js";
 
 function renderComments(comments = []) {
 	if (!Array.isArray(comments) || comments.length === 0) {
@@ -55,7 +11,9 @@ function renderComments(comments = []) {
 		<ul class="detail-comments-list">
 			${comments
 				.map((comment) => {
-					const owner = escapeHtml(comment.owner || "Unknown");
+					const ownerName =
+						typeof comment.owner === "string" ? comment.owner : (comment.owner?.name ?? "Unknown");
+					const owner = escapeHtml(ownerName);
 					const body = escapeHtml(comment.body || "");
 					const created = escapeHtml(formatDateTime(comment.created));
 

@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { getApiConfig } from "../config/env.js";
 
 export function validateLoginForm(formData) {
 	const errors = {};
@@ -26,7 +26,9 @@ export function validateLoginForm(formData) {
 }
 
 export async function loginUser(credentials) {
-	const response = await fetch(`${API_BASE_URL}/auth/login`, {
+	const { apiBaseUrl } = getApiConfig();
+
+	const response = await fetch(`${apiBaseUrl}/auth/login`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -86,7 +88,9 @@ export function validateRegistrationForm(formData) {
 }
 
 export async function registerUser(userData) {
-	const response = await fetch(`${API_BASE_URL}/auth/register`, {
+	const { apiBaseUrl } = getApiConfig();
+
+	const response = await fetch(`${apiBaseUrl}/auth/register`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
