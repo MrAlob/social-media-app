@@ -1,4 +1,4 @@
-# Social Media App
+# Social Media App [![CI](https://github.com/MrAlob/social-media-app/actions/workflows/ci.yml/badge.svg)](https://github.com/MrAlob/social-media-app/actions/workflows/ci.yml)
 
 ## Getting Started
 
@@ -18,5 +18,34 @@
    npm run dev
    ```
    Or open `index.html` directly in your browser for a static build.
+
+## Testing
+
+### Unit tests (Vitest)
+
+Run all unit tests:
+
+```
+npm run test
+```
+
+Watch mode:
+
+```
+npm run test:watch
+```
+
+### End-to-end tests (Playwright)
+
+Run end-to-end tests:
+
+```
+npm run test:e2e
+```
+
+### Test locations
+
+1. Vitest unit tests: `tests/unit`
+2. Playwright E2E tests: `tests/e2e`
 
 

@@ -15,6 +15,9 @@ dist-ssr
 # Editor directories and files
 .vscode
 .github
+.agents
+.tmp
+.env
 opencode.json
 .idea
 .DS_Store
@@ -23,4 +26,13 @@ opencode.json
 *.njsproj
 *.sln
 *.sw?
+
+# Test artifacts
+test-results/
+playwright-report/
+
+# Allow CI workflows to be committed
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml
 
