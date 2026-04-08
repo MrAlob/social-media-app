@@ -1,4 +1,4 @@
-# Social Media App
+# Social Media App [![CI](https://github.com/MrAlob/social-media-app/actions/workflows/ci.yml/badge.svg)](https://github.com/MrAlob/social-media-app/actions/workflows/ci.yml)
 
 ## Getting Started
 
