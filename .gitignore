@@ -27,3 +27,12 @@ opencode.json
 *.sln
 *.sw?
 
+# Test artifacts
+test-results/
+playwright-report/
+
+# Allow CI workflows to be committed
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml
+
