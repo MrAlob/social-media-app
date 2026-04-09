@@ -1,6 +1,4 @@
-# Social Media App
-
-[![CI](https://github.com/MrAlob/social-media-app/actions/workflows/ci.yml/badge.svg)](https://github.com/MrAlob/social-media-app/actions/workflows/ci.yml)
+# Social Media App [![CI](https://github.com/MrAlob/social-media-app/actions/workflows/ci.yml/badge.svg)](https://github.com/MrAlob/social-media-app/actions/workflows/ci.yml)
 
 A frontend social media application built as a school project.
 
