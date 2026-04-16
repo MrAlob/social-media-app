@@ -52,7 +52,10 @@ export function renderFeedPage(rootElement) {
 					<h1 class="feed-title">Feed</h1>
 					<p class="feed-subtitle">Logged in as ${safeUserName}</p>
 				</div>
-				<button class="logout-button" id="logout-button" type="button">Log Out</button>
+        <div class="feed-actions">
+          <button class="create-post-button" id="create-post-button" type="button">Create Post</button>
+          <button class="logout-button" id="logout-button" type="button">Log Out</button>
+        </div>
 			</header>
 
 			<p class="feed-message" id="feed-message" aria-live="polite"></p>
@@ -65,10 +68,15 @@ export function renderFeedPage(rootElement) {
   const feedMessage = rootElement.querySelector('#feed-message');
   const loadMoreButton = rootElement.querySelector('#load-more-button');
   const logoutButton = rootElement.querySelector('#logout-button');
+  const createPostButton = rootElement.querySelector('#create-post-button');
 
-  if (!feedGrid || !feedMessage || !loadMoreButton || !logoutButton) {
+  if (!feedGrid || !feedMessage || !loadMoreButton || !logoutButton || !createPostButton) {
     return;
   }
+
+  createPostButton.addEventListener('click', () => {
+    window.location.hash = '#create';
+  });
 
   feedGrid.addEventListener('click', (event) => {
     const target = event.target;

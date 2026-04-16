@@ -11,6 +11,7 @@ function buildHandlers() {
     renderLoginPage: vi.fn(),
     renderRegisterPage: vi.fn(),
     renderFeedPage: vi.fn(),
+    renderPostCreatePage: vi.fn(),
     renderPostDetailPage: vi.fn(),
   };
 }
@@ -40,6 +41,18 @@ describe('createRoutes + getMatchingRoute', () => {
 
     expect(route).toBeDefined();
     expect(route.requiresAuth).toBe(true);
+  });
+
+  it('matches protected create route', () => {
+    const handlers = buildHandlers();
+    const routes = createRoutes(handlers);
+    const route = getMatchingRoute('#create', routes);
+
+    expect(route).toBeDefined();
+    expect(route.requiresAuth).toBe(true);
+
+    route.render('app');
+    expect(handlers.renderPostCreatePage).toHaveBeenCalledWith('app');
   });
 
   it('falls back to default route for unknown hash', () => {

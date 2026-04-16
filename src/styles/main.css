@@ -146,6 +146,22 @@ body {
   cursor: pointer;
 }
 
+.feed-actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.create-post-button {
+  border: 1px solid #111111;
+  background: #111111;
+  color: #ffffff;
+  padding: 0.5rem 0.8rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .feed-message {
   margin: 0.3rem 0 1rem;
   color: #444444;
@@ -237,6 +253,13 @@ body {
 
 .detail-topbar {
   margin-bottom: 1rem;
+}
+
+.create-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
 
 .back-button {
@@ -361,8 +384,92 @@ body {
   color: #666666;
 }
 
+.create-post-form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.create-field-label {
+  color: #111111;
+  margin-top: 0.4rem;
+}
+
+.create-field-input {
+  border-color: #bbbbbb;
+}
+
+.create-textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.create-field-error {
+  color: #b00020;
+}
+
+.field-hint {
+  margin: 0.1rem 0 0;
+  color: #666666;
+  font-size: 0.85rem;
+}
+
+.character-counter {
+  margin: 0.1rem 0 0;
+  color: #555555;
+  font-size: 0.82rem;
+  text-align: right;
+}
+
+.media-preview {
+  border: 1px dashed #cccccc;
+  border-radius: 6px;
+  padding: 0.8rem;
+  margin-top: 0.3rem;
+  background: #fbfbfb;
+}
+
+.create-form-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+}
+
+.create-submit-button {
+  width: auto;
+  margin-top: 0;
+  border-color: #111111;
+  background: #111111;
+}
+
+.create-form-message {
+  text-align: left;
+  color: #111111;
+}
+
 @media (max-width: 520px) {
   .login-card {
     padding: 1.2rem;
+  }
+
+  .feed-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .feed-topbar {
+    flex-wrap: wrap;
+  }
+
+  .create-topbar {
+    flex-wrap: wrap;
+  }
+
+  .create-form-actions {
+    justify-content: stretch;
+  }
+
+  .create-form-actions button {
+    flex: 1;
   }
 }
