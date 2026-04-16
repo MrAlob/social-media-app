@@ -1,11 +1,11 @@
-import { registerUser, validateRegistrationForm } from "../../services/auth.js";
+import { registerUser, validateRegistrationForm } from '../../services/auth.js';
 
 export function renderRegisterPage(rootElement) {
-	if (!rootElement) {
-		return;
-	}
+  if (!rootElement) {
+    return;
+  }
 
-	rootElement.innerHTML = `
+  rootElement.innerHTML = `
 		<main class="page">
 			<section class="login-card" aria-labelledby="register-title">
 				<h1 id="register-title" class="title">Register</h1>
@@ -57,59 +57,66 @@ export function renderRegisterPage(rootElement) {
 		</main>
 	`;
 
-	const registerForm = rootElement.querySelector("#register-form");
-	const submitButton = rootElement.querySelector("#register-submit");
-	const messageElement = rootElement.querySelector("#register-message");
-	const nameError = rootElement.querySelector('[data-error-for="name"]');
-	const emailError = rootElement.querySelector('[data-error-for="email"]');
-	const passwordError = rootElement.querySelector('[data-error-for="password"]');
+  const registerForm = rootElement.querySelector('#register-form');
+  const submitButton = rootElement.querySelector('#register-submit');
+  const messageElement = rootElement.querySelector('#register-message');
+  const nameError = rootElement.querySelector('[data-error-for="name"]');
+  const emailError = rootElement.querySelector('[data-error-for="email"]');
+  const passwordError = rootElement.querySelector('[data-error-for="password"]');
 
-	if (!registerForm || !submitButton || !messageElement || !nameError || !emailError || !passwordError) {
-		return;
-	}
+  if (
+    !registerForm ||
+    !submitButton ||
+    !messageElement ||
+    !nameError ||
+    !emailError ||
+    !passwordError
+  ) {
+    return;
+  }
 
-	registerForm.addEventListener("submit", async (event) => {
-		event.preventDefault();
+  registerForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-		messageElement.textContent = "";
-		messageElement.classList.remove("is-error", "is-success");
-		nameError.textContent = "";
-		emailError.textContent = "";
-		passwordError.textContent = "";
+    messageElement.textContent = '';
+    messageElement.classList.remove('is-error', 'is-success');
+    nameError.textContent = '';
+    emailError.textContent = '';
+    passwordError.textContent = '';
 
-		const formData = new FormData(registerForm);
-		const registrationData = {
-			name: String(formData.get("name") || ""),
-			email: String(formData.get("email") || ""),
-			password: String(formData.get("password") || ""),
-		};
+    const formData = new FormData(registerForm);
+    const registrationData = {
+      name: String(formData.get('name') || ''),
+      email: String(formData.get('email') || ''),
+      password: String(formData.get('password') || ''),
+    };
 
-		const validation = validateRegistrationForm(registrationData);
+    const validation = validateRegistrationForm(registrationData);
 
-		if (!validation.isValid) {
-			nameError.textContent = validation.errors.name || "";
-			emailError.textContent = validation.errors.email || "";
-			passwordError.textContent = validation.errors.password || "";
-			return;
-		}
+    if (!validation.isValid) {
+      nameError.textContent = validation.errors.name || '';
+      emailError.textContent = validation.errors.email || '';
+      passwordError.textContent = validation.errors.password || '';
+      return;
+    }
 
-		submitButton.disabled = true;
-		submitButton.textContent = "Creating...";
+    submitButton.disabled = true;
+    submitButton.textContent = 'Creating...';
 
-		try {
-			await registerUser(validation.data);
-			messageElement.textContent = "Registration successful. Redirecting to login...";
-			messageElement.classList.add("is-success");
+    try {
+      await registerUser(validation.data);
+      messageElement.textContent = 'Registration successful. Redirecting to login...';
+      messageElement.classList.add('is-success');
 
-			setTimeout(() => {
-				window.location.hash = "#login";
-			}, 700);
-		} catch (error) {
-			messageElement.textContent = error.message || "Registration failed. Please try again.";
-			messageElement.classList.add("is-error");
-		} finally {
-			submitButton.disabled = false;
-			submitButton.textContent = "Create account";
-		}
-	});
+      setTimeout(() => {
+        window.location.hash = '#login';
+      }, 700);
+    } catch (error) {
+      messageElement.textContent = error.message || 'Registration failed. Please try again.';
+      messageElement.classList.add('is-error');
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Create account';
+    }
+  });
 }
