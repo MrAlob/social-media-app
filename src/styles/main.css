@@ -204,12 +204,16 @@ body {
   margin: 0 0 0.4rem;
   font-size: 1.1rem;
   color: #111111;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .post-body {
   margin: 0 0 0.75rem;
   color: #333333;
   line-height: 1.4;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .post-media {

@@ -3,7 +3,7 @@ import { getAccessToken } from '../../services/storage.js';
 import { getMediaUrl } from '../../utils/format.js';
 
 const TITLE_MAX_LENGTH = 280;
-const BODY_MAX_LENGTH = 2000;
+const BODY_MAX_LENGTH = 280;
 const IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp']);
 
 export function validateMediaUrl(url) {
