@@ -26,6 +26,11 @@ export function createRoutes(handlers) {
       render: (rootElement) => handlers.renderFeedPage(rootElement),
     },
     {
+      matches: (hash) => hash === '#create',
+      requiresAuth: true,
+      render: (rootElement) => handlers.renderPostCreatePage(rootElement),
+    },
+    {
       matches: (hash) => hash.startsWith('#post'),
       requiresAuth: true,
       render: (rootElement) => handlers.renderPostDetailPage(rootElement, getPostIdFromHash()),

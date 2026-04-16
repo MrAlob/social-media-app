@@ -67,3 +67,32 @@ export async function fetchPostById({ accessToken, postId }) {
 
   return responseBody?.data || null;
 }
+
+export async function createPost({ accessToken, postData }) {
+  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
+
+  if (!accessToken) {
+    throw new Error('Access token is required');
+  }
+
+  const response = await fetch(`${apiBaseUrl}/social/posts`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'X-Noroff-API-Key': apiKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(postData),
+  });
+
+  const responseBody = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
+    const error = new Error(apiMessage || 'Failed to create post');
+    error.status = response.status;
+    throw error;
+  }
+
+  return responseBody?.data || null;
+}
