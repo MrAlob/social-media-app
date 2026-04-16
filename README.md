@@ -61,6 +61,8 @@ The app will be available at the local Vite URL shown in your terminal.
 - npm run test: Run unit tests once
 - npm run test:watch: Run unit tests in watch mode
 - npm run test:e2e: Run Playwright end-to-end tests
+- npm run format: Format all HTML, CSS, and JS files with Prettier
+- npm run format:check: Check formatting for all HTML, CSS, and JS files with Prettier
 
 ## Testing
 
