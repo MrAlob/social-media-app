@@ -32,7 +32,10 @@ describe('validatePostForm', () => {
       title: 'My first post',
       body: 'Learning JavaScript modules',
       tags: ['learning', 'javascript'],
-      media: 'https://example.com/image.png',
+      media: {
+        url: 'https://example.com/image.png',
+        alt: 'My first post',
+      },
     });
   });
 

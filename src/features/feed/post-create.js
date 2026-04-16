@@ -76,7 +76,10 @@ export function validatePostForm(formData) {
 	}
 
 	if (media) {
-		data.media = media;
+		data.media = {
+			url: media,
+			alt: title || 'Post media',
+		};
 	}
 
 	return {

@@ -27,7 +27,10 @@ async function mockCreatePostFlow(page) {
     expect(payload.title).toBe('Created from test');
     expect(payload.body).toBe('Post body from e2e');
     expect(payload.tags).toEqual(['test', 'e2e']);
-    expect(payload.media).toBe('https://example.com/photo.jpg');
+    expect(payload.media).toEqual({
+      url: 'https://example.com/photo.jpg',
+      alt: 'Created from test',
+    });
 
     await route.fulfill({
       status: 201,
