@@ -1,5 +1,10 @@
 import { getApiConfig } from '../config/env.js';
 
+/**
+ * Validates login form input and normalizes the email field.
+ * @param {{ email?: string, password?: string }} formData - Raw login form values.
+ * @returns {{ isValid: boolean, errors: Record<string, string>, email: string }}
+ */
 export function validateLoginForm(formData) {
   const errors = {};
 
@@ -25,6 +30,12 @@ export function validateLoginForm(formData) {
   };
 }
 
+/**
+ * Sends login credentials to the API and returns the authenticated user payload.
+ * @param {{ email: string, password: string }} credentials - Login credentials.
+ * @returns {Promise<object|undefined>} Resolved API data object when login succeeds.
+ * @throws {Error} When the API request fails or credentials are invalid.
+ */
 export async function loginUser(credentials) {
   const { apiBaseUrl } = getApiConfig();
 
@@ -46,6 +57,11 @@ export async function loginUser(credentials) {
   return responseBody?.data;
 }
 
+/**
+ * Validates registration input and returns sanitized values for API submission.
+ * @param {{ name?: string, email?: string, password?: string }} formData - Raw registration form values.
+ * @returns {{ isValid: boolean, errors: Record<string, string>, data: { name: string, email: string, password: string } }}
+ */
 export function validateRegistrationForm(formData) {
   const errors = {};
   const name = (formData.name || '').trim();
@@ -87,6 +103,12 @@ export function validateRegistrationForm(formData) {
   };
 }
 
+/**
+ * Sends registration data to the API and returns the created user payload.
+ * @param {{ name: string, email: string, password: string }} userData - Sanitized registration data.
+ * @returns {Promise<object|undefined>} Resolved API data object when registration succeeds.
+ * @throws {Error} When the API request fails or validation is rejected by the API.
+ */
 export async function registerUser(userData) {
   const { apiBaseUrl } = getApiConfig();
 
