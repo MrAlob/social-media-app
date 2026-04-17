@@ -168,6 +168,14 @@ body {
   min-height: 1.2rem;
 }
 
+.feed-message.is-error {
+  color: #b00020;
+}
+
+.feed-message.is-success {
+  color: #0f6d2b;
+}
+
 .feed-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -247,6 +255,21 @@ body {
   border-radius: 4px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.post-delete-button {
+  border: 1px solid #b00020;
+  background: #ffffff;
+  color: #b00020;
+  padding: 0.45rem 0.7rem;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.post-delete-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .load-more-button {
@@ -461,6 +484,64 @@ body {
 .create-form-message {
   text-align: left;
   color: #111111;
+}
+
+.confirm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgb(0 0 0 / 50%);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.confirm-modal {
+  width: min(100%, 420px);
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.confirm-modal-icon {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.confirm-modal-title {
+  margin: 0.4rem 0 0;
+  color: #111111;
+}
+
+.confirm-modal-message {
+  margin: 0.5rem 0 0;
+  color: #333333;
+  line-height: 1.4;
+}
+
+.confirm-modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.confirm-modal-cancel,
+.confirm-modal-confirm {
+  border: 1px solid #111111;
+  background: #ffffff;
+  color: #111111;
+  padding: 0.45rem 0.7rem;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.confirm-modal-confirm.is-danger {
+  border-color: #b00020;
+  background: #b00020;
+  color: #ffffff;
 }
 
 @media (max-width: 520px) {
