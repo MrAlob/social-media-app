@@ -1,6 +1,7 @@
-import { deletePost, fetchFeedPosts } from '../../services/api.js';
+import { deletePost, fetchFeedPosts, searchPosts } from '../../services/api.js';
 import { clearAuthData, getAccessToken, getCurrentUser } from '../../services/storage.js';
 import { escapeHtml, formatDate, getMediaUrl, truncateText } from '../../utils/format.js';
+import { debounce } from '../../utils/debounce.js';
 import { showConfirmDialog } from '../../ui/confirm.js';
 
 function renderPostCard(post, currentUserName) {
@@ -69,6 +70,18 @@ export function renderFeedPage(rootElement) {
         </div>
 			</header>
 
+      <section class="feed-search" aria-label="Search posts">
+        <input
+          id="feed-search-input"
+          class="field-input feed-search-input"
+          type="search"
+          placeholder="Search posts..."
+          autocomplete="off"
+        />
+        <button id="feed-search-clear" class="back-button feed-search-clear" type="button" hidden>Clear</button>
+      </section>
+      <p class="feed-subtitle" id="feed-search-result"></p>
+
 			<p class="feed-message" id="feed-message" aria-live="polite"></p>
 			<section class="feed-grid" id="feed-grid"></section>
 			<button class="load-more-button" id="load-more-button" type="button">Load More</button>
@@ -80,8 +93,20 @@ export function renderFeedPage(rootElement) {
   const loadMoreButton = rootElement.querySelector('#load-more-button');
   const logoutButton = rootElement.querySelector('#logout-button');
   const createPostButton = rootElement.querySelector('#create-post-button');
+  const searchInput = rootElement.querySelector('#feed-search-input');
+  const clearSearchButton = rootElement.querySelector('#feed-search-clear');
+  const searchResult = rootElement.querySelector('#feed-search-result');
 
-  if (!feedGrid || !feedMessage || !loadMoreButton || !logoutButton || !createPostButton) {
+  if (
+    !feedGrid ||
+    !feedMessage ||
+    !loadMoreButton ||
+    !logoutButton ||
+    !createPostButton ||
+    !searchInput ||
+    !clearSearchButton ||
+    !searchResult
+  ) {
     return;
   }
 
@@ -206,6 +231,14 @@ export function renderFeedPage(rootElement) {
   let currentPage = 1;
   let isLastPage = false;
   let isLoading = false;
+  let currentQuery = '';
+
+  function resetFeedState() {
+    currentPage = 1;
+    isLastPage = false;
+    feedGrid.innerHTML = '';
+    loadMoreButton.style.display = '';
+  }
 
   logoutButton.addEventListener('click', () => {
     clearAuthData();
@@ -218,21 +251,32 @@ export function renderFeedPage(rootElement) {
     }
 
     isLoading = true;
-    feedMessage.textContent = 'Loading posts...';
+    const hasSearch = Boolean(currentQuery);
+    feedMessage.textContent = hasSearch ? 'Searching posts...' : 'Loading posts...';
     loadMoreButton.disabled = true;
 
     try {
-      const result = await fetchFeedPosts({
-        accessToken,
-        page: currentPage,
-        limit: 12,
-      });
+      const result = hasSearch
+        ? await searchPosts({
+            accessToken,
+            queryText: currentQuery,
+            page: currentPage,
+            limit: 12,
+          })
+        : await fetchFeedPosts({
+            accessToken,
+            page: currentPage,
+            limit: 12,
+          });
 
       if (result.posts.length === 0 && currentPage === 1) {
         feedGrid.innerHTML = '';
-        feedMessage.textContent = 'No posts found yet.';
+        feedMessage.textContent = hasSearch
+          ? `No results found for "${currentQuery}".`
+          : 'No posts found yet.';
         loadMoreButton.style.display = 'none';
         isLastPage = true;
+        searchResult.textContent = hasSearch ? 'Found 0 posts' : '';
         return;
       }
 
@@ -244,6 +288,13 @@ export function renderFeedPage(rootElement) {
       feedMessage.textContent = '';
       feedMessage.classList.remove('is-error', 'is-success');
       isLastPage = Boolean(result.meta?.isLastPage);
+
+      if (hasSearch) {
+        const renderedPostCount = feedGrid.querySelectorAll('.post-card').length;
+        searchResult.textContent = `Found ${renderedPostCount} post${renderedPostCount === 1 ? '' : 's'}`;
+      } else {
+        searchResult.textContent = '';
+      }
 
       if (isLastPage) {
         loadMoreButton.style.display = 'none';
@@ -265,6 +316,34 @@ export function renderFeedPage(rootElement) {
       isLoading = false;
     }
   }
+
+  const onSearchInput = debounce(() => {
+    const query = String(searchInput.value || '').trim();
+    const normalizedQuery = query.toLowerCase();
+    const previousQuery = currentQuery.toLowerCase();
+
+    clearSearchButton.hidden = !query;
+
+    if (normalizedQuery === previousQuery) {
+      return;
+    }
+
+    currentQuery = query;
+    resetFeedState();
+    loadPosts();
+  }, 300);
+
+  searchInput.addEventListener('input', onSearchInput);
+
+  clearSearchButton.addEventListener('click', () => {
+    searchInput.value = '';
+    clearSearchButton.hidden = true;
+    currentQuery = '';
+    searchResult.textContent = '';
+    resetFeedState();
+    loadPosts();
+    searchInput.focus();
+  });
 
   loadMoreButton.addEventListener('click', loadPosts);
   loadPosts();
