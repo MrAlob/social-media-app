@@ -1,6 +1,7 @@
-import { fetchFeedPosts } from '../../services/api.js';
+import { deletePost, fetchFeedPosts } from '../../services/api.js';
 import { clearAuthData, getAccessToken, getCurrentUser } from '../../services/storage.js';
 import { escapeHtml, formatDate, getMediaUrl, truncateText } from '../../utils/format.js';
+import { showConfirmDialog } from '../../ui/confirm.js';
 
 function renderPostCard(post, currentUserName) {
   const mediaUrl = getMediaUrl(post.media);
@@ -30,7 +31,8 @@ function renderPostCard(post, currentUserName) {
         <button class="post-open-button" type="button" data-post-id="${postId}">Open post</button>
         ${
           isOwner
-            ? `<button class="post-open-button" type="button" data-edit-post-id="${postId}">Edit post</button>`
+            ? `<button class="post-open-button" type="button" data-edit-post-id="${postId}">Edit post</button>
+               <button class="post-delete-button" type="button" data-delete-post-id="${postId}" data-post-title="${postTitle}">Delete</button>`
             : ''
         }
       </div>
@@ -95,6 +97,74 @@ export function renderFeedPage(rootElement) {
 
     const trigger = target.closest('[data-post-id]');
     const editTrigger = target.closest('[data-edit-post-id]');
+    const deleteTrigger = target.closest('[data-delete-post-id]');
+
+    if (deleteTrigger) {
+      const deletePostId = deleteTrigger.getAttribute('data-delete-post-id');
+      const postTitle = deleteTrigger.getAttribute('data-post-title') || 'this post';
+
+      if (!deletePostId) {
+        return;
+      }
+
+      showConfirmDialog({
+        title: 'Delete Post',
+        message: `Are you sure you want to delete "${postTitle}"?`,
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+        danger: true,
+      }).then(async (confirmed) => {
+        if (!confirmed) {
+          return;
+        }
+
+        const deleteButton =
+          deleteTrigger instanceof HTMLButtonElement
+            ? deleteTrigger
+            : feedGrid.querySelector(`[data-delete-post-id="${deletePostId}"]`);
+
+        if (deleteButton instanceof HTMLButtonElement) {
+          deleteButton.disabled = true;
+          deleteButton.textContent = 'Deleting...';
+        }
+
+        try {
+          await deletePost({ accessToken, postId: deletePostId });
+
+          const card = feedGrid.querySelector(`[data-post-id="${deletePostId}"]`);
+
+          if (card) {
+            card.remove();
+          }
+
+          feedMessage.textContent = 'Post deleted successfully.';
+          feedMessage.classList.remove('is-error');
+          feedMessage.classList.add('is-success');
+        } catch (error) {
+          if (error.status === 401) {
+            clearAuthData();
+            window.location.hash = '#login';
+            return;
+          }
+
+          const messageByStatus = {
+            403: 'You can only delete your own post.',
+            404: 'Post not found.',
+          };
+
+          feedMessage.textContent = messageByStatus[error.status] || error.message || 'Could not delete post.';
+          feedMessage.classList.remove('is-success');
+          feedMessage.classList.add('is-error');
+
+          if (deleteButton instanceof HTMLButtonElement) {
+            deleteButton.disabled = false;
+            deleteButton.textContent = 'Delete';
+          }
+        }
+      });
+
+      return;
+    }
 
     if (editTrigger) {
       const editPostId = editTrigger.getAttribute('data-edit-post-id');
@@ -159,6 +229,7 @@ export function renderFeedPage(rootElement) {
       );
 
       feedMessage.textContent = '';
+      feedMessage.classList.remove('is-error', 'is-success');
       isLastPage = Boolean(result.meta?.isLastPage);
 
       if (isLastPage) {

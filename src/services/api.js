@@ -129,3 +129,38 @@ export async function updatePost({ accessToken, postId, postData }) {
 
   return responseBody?.data || null;
 }
+
+export async function deletePost({ accessToken, postId }) {
+  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
+
+  if (!accessToken) {
+    throw new Error('Access token is required');
+  }
+
+  if (!postId) {
+    throw new Error('Post id is required');
+  }
+
+  const response = await fetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'X-Noroff-API-Key': apiKey,
+    },
+  });
+
+  if (response.status === 204) {
+    return true;
+  }
+
+  const responseBody = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
+    const error = new Error(apiMessage || 'Failed to delete post');
+    error.status = response.status;
+    throw error;
+  }
+
+  return true;
+}

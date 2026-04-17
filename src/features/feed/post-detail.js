@@ -1,6 +1,7 @@
-import { fetchPostById } from '../../services/api.js';
-import { clearAuthData, getAccessToken } from '../../services/storage.js';
+import { deletePost, fetchPostById } from '../../services/api.js';
+import { clearAuthData, getAccessToken, getCurrentUser } from '../../services/storage.js';
 import { escapeHtml, formatDateTime, getMediaUrl } from '../../utils/format.js';
+import { showConfirmDialog } from '../../ui/confirm.js';
 
 function renderComments(comments = []) {
   if (!Array.isArray(comments) || comments.length === 0) {
@@ -47,9 +48,10 @@ function renderReactions(reactions = []) {
 	`;
 }
 
-function renderPostDetail(post) {
+function renderPostDetail(post, currentUser) {
   const title = escapeHtml(post?.title || 'Untitled post');
   const body = escapeHtml(post?.body || '');
+  const rawTitle = String(post?.title || 'Untitled post');
   const authorName = escapeHtml(post?.author?.name || 'Unknown');
   const authorEmail = escapeHtml(post?.author?.email || 'No email');
   const created = escapeHtml(formatDateTime(post?.created));
@@ -58,6 +60,8 @@ function renderPostDetail(post) {
   const safeTags = tags.map((tag) => escapeHtml(tag)).filter(Boolean);
   const commentsCount = Number(post?._count?.comments || post?.comments?.length || 0);
   const reactionsCount = Number(post?._count?.reactions || 0);
+  const isOwner = String(post?.author?.name || '') === String(currentUser?.name || '');
+  const postId = escapeHtml(post?.id || '');
 
   return `
 		<article class="post-detail-card">
@@ -68,6 +72,14 @@ function renderPostDetail(post) {
 			</header>
 
 			<h1 class="post-detail-title">${title}</h1>
+      ${
+        isOwner
+          ? `<div class="post-actions">
+            <button class="post-open-button" type="button" data-edit-post-id="${postId}">Edit post</button>
+            <button class="post-delete-button" type="button" data-delete-post-id="${postId}" data-post-title="${escapeHtml(rawTitle)}">Delete</button>
+          </div>`
+          : ''
+      }
 			<p class="post-detail-body">${body}</p>
 
 			${mediaUrl ? `<img class="post-detail-media" src="${mediaUrl}" alt="Post media" loading="lazy" />` : ''}
@@ -102,6 +114,7 @@ export function renderPostDetailPage(rootElement, postId) {
   }
 
   const accessToken = getAccessToken();
+  const currentUser = getCurrentUser();
 
   if (!accessToken) {
     window.location.hash = '#login';
@@ -143,7 +156,65 @@ export function renderPostDetailPage(rootElement, postId) {
       }
 
       messageElement.textContent = '';
-      contentElement.innerHTML = renderPostDetail(post);
+      messageElement.classList.remove('is-error', 'is-success');
+      contentElement.innerHTML = renderPostDetail(post, currentUser);
+
+      const editButton = contentElement.querySelector('[data-edit-post-id]');
+      const deleteButton = contentElement.querySelector('[data-delete-post-id]');
+
+      if (editButton instanceof HTMLButtonElement) {
+        editButton.addEventListener('click', () => {
+          window.location.hash = `#edit?id=${encodeURIComponent(postId)}`;
+        });
+      }
+
+      if (deleteButton instanceof HTMLButtonElement) {
+        deleteButton.addEventListener('click', async () => {
+          const confirmed = await showConfirmDialog({
+            title: 'Delete Post',
+            message: `Are you sure you want to delete "${post?.title || 'this post'}"?`,
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            danger: true,
+          });
+
+          if (!confirmed) {
+            return;
+          }
+
+          deleteButton.disabled = true;
+          deleteButton.textContent = 'Deleting...';
+
+          try {
+            await deletePost({ accessToken, postId });
+            messageElement.textContent = 'Post deleted successfully. Returning to feed...';
+            messageElement.classList.remove('is-error');
+            messageElement.classList.add('is-success');
+
+            setTimeout(() => {
+              window.location.hash = '#feed';
+            }, 700);
+          } catch (error) {
+            if (error.status === 401) {
+              clearAuthData();
+              window.location.hash = '#login';
+              return;
+            }
+
+            const messageByStatus = {
+              403: 'You can only delete your own post.',
+              404: 'Post not found.',
+            };
+
+            messageElement.textContent =
+              messageByStatus[error.status] || error.message || 'Could not delete post.';
+            messageElement.classList.remove('is-success');
+            messageElement.classList.add('is-error');
+            deleteButton.disabled = false;
+            deleteButton.textContent = 'Delete';
+          }
+        });
+      }
     })
     .catch((error) => {
       if (error.status === 401) {
