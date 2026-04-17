@@ -18,6 +18,16 @@ export function getEditPostIdFromHash(hashValue = window.location.hash || '') {
   return params.get('id') || '';
 }
 
+export function getProfileNameFromHash(hashValue = window.location.hash || '') {
+  if (!hashValue.startsWith('#profile')) {
+    return '';
+  }
+
+  const queryString = hashValue.split('?')[1] || '';
+  const params = new URLSearchParams(queryString);
+  return params.get('name') || '';
+}
+
 export function createRoutes(handlers) {
   return [
     {
@@ -49,6 +59,11 @@ export function createRoutes(handlers) {
       matches: (hash) => hash.startsWith('#edit'),
       requiresAuth: true,
       render: (rootElement) => handlers.renderPostEditPage(rootElement),
+    },
+    {
+      matches: (hash) => hash.startsWith('#profile'),
+      requiresAuth: true,
+      render: (rootElement) => handlers.renderUserProfilePage(rootElement),
     },
     {
       matches: () => true,
