@@ -52,7 +52,8 @@ function renderPostDetail(post, currentUser) {
   const title = escapeHtml(post?.title || 'Untitled post');
   const body = escapeHtml(post?.body || '');
   const rawTitle = String(post?.title || 'Untitled post');
-  const authorName = escapeHtml(post?.author?.name || 'Unknown');
+  const authorRawName = String(post?.author?.name || 'Unknown');
+  const authorName = escapeHtml(authorRawName);
   const authorEmail = escapeHtml(post?.author?.email || 'No email');
   const created = escapeHtml(formatDateTime(post?.created));
   const mediaUrl = getMediaUrl(post?.media);
@@ -66,7 +67,7 @@ function renderPostDetail(post, currentUser) {
   return `
 		<article class="post-detail-card">
 			<header class="post-detail-header">
-				<p class="post-detail-author">${authorName}</p>
+        <button class="post-author-button" type="button" data-profile-name="${authorName}">${authorName}</button>
 				<p class="post-detail-email">${authorEmail}</p>
 				<p class="post-detail-date">${created}</p>
 			</header>
@@ -161,6 +162,19 @@ export function renderPostDetailPage(rootElement, postId) {
 
       const editButton = contentElement.querySelector('[data-edit-post-id]');
       const deleteButton = contentElement.querySelector('[data-delete-post-id]');
+      const profileButton = contentElement.querySelector('[data-profile-name]');
+
+      if (profileButton instanceof HTMLButtonElement) {
+        profileButton.addEventListener('click', () => {
+          const profileName = profileButton.getAttribute('data-profile-name');
+
+          if (!profileName) {
+            return;
+          }
+
+          window.location.hash = `#profile?name=${encodeURIComponent(profileName)}`;
+        });
+      }
 
       if (editButton instanceof HTMLButtonElement) {
         editButton.addEventListener('click', () => {

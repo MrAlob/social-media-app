@@ -164,3 +164,77 @@ export async function deletePost({ accessToken, postId }) {
 
   return true;
 }
+
+export async function fetchProfileByName({ accessToken, profileName }) {
+  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
+
+  if (!accessToken) {
+    throw new Error('Access token is required');
+  }
+
+  if (!profileName) {
+    throw new Error('Profile name is required');
+  }
+
+  const response = await fetch(`${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'X-Noroff-API-Key': apiKey,
+    },
+  });
+
+  const responseBody = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
+    const error = new Error(apiMessage || 'Failed to load profile');
+    error.status = response.status;
+    throw error;
+  }
+
+  return responseBody?.data || null;
+}
+
+export async function fetchProfilePosts({ accessToken, profileName, page = 1, limit = 12 }) {
+  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
+
+  if (!accessToken) {
+    throw new Error('Access token is required');
+  }
+
+  if (!profileName) {
+    throw new Error('Profile name is required');
+  }
+
+  const query = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+    _author: 'true',
+    _comments: 'true',
+    _reactions: 'true',
+  });
+
+  const response = await fetch(
+    `${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/posts?${query.toString()}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    },
+  );
+
+  const responseBody = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
+    const error = new Error(apiMessage || 'Failed to load profile posts');
+    error.status = response.status;
+    throw error;
+  }
+
+  return {
+    posts: responseBody?.data || [],
+    meta: responseBody?.meta || {},
+  };
+}

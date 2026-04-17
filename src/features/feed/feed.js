@@ -6,7 +6,8 @@ import { showConfirmDialog } from '../../ui/confirm.js';
 function renderPostCard(post, currentUserName) {
   const mediaUrl = getMediaUrl(post.media);
   const postId = escapeHtml(post.id);
-  const authorName = escapeHtml(post.author?.name || 'Unknown');
+  const authorRawName = String(post.author?.name || 'Unknown');
+  const authorName = escapeHtml(authorRawName);
   const postDate = escapeHtml(formatDate(post.created));
   const postTitle = escapeHtml(post.title || 'Untitled post');
   const postBody = escapeHtml(truncateText(post.body));
@@ -17,7 +18,7 @@ function renderPostCard(post, currentUserName) {
   return `
 		<article class="post-card" data-post-id="${postId}">
 			<div class="post-header">
-				<p class="post-author">${authorName}</p>
+        <button class="post-author-button" type="button" data-profile-name="${authorName}">${authorName}</button>
 				<p class="post-date">${postDate}</p>
 			</div>
 			<h2 class="post-title">${postTitle}</h2>
@@ -98,6 +99,18 @@ export function renderFeedPage(rootElement) {
     const trigger = target.closest('[data-post-id]');
     const editTrigger = target.closest('[data-edit-post-id]');
     const deleteTrigger = target.closest('[data-delete-post-id]');
+    const profileTrigger = target.closest('[data-profile-name]');
+
+    if (profileTrigger) {
+      const profileName = profileTrigger.getAttribute('data-profile-name');
+
+      if (!profileName) {
+        return;
+      }
+
+      window.location.hash = `#profile?name=${encodeURIComponent(profileName)}`;
+      return;
+    }
 
     if (deleteTrigger) {
       const deletePostId = deleteTrigger.getAttribute('data-delete-post-id');

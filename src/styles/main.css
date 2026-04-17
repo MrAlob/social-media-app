@@ -204,6 +204,19 @@ body {
   color: #111111;
 }
 
+.post-author-button {
+  border: 0;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: #111111;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .post-date {
   margin: 0;
 }
@@ -544,6 +557,64 @@ body {
   color: #ffffff;
 }
 
+.profile-header-card {
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.profile-banner {
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+}
+
+.profile-header-main {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  padding: 1rem;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 3px solid #ffffff;
+  margin-top: -36px;
+  background: #ffffff;
+}
+
+.profile-avatar.placeholder {
+  display: grid;
+  place-items: center;
+  font-size: 1.8rem;
+  color: #666666;
+}
+
+.profile-header-text h1 {
+  margin-bottom: 0.3rem;
+}
+
+.profile-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  color: #444444;
+}
+
+.profile-header-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 @media (max-width: 520px) {
   .login-card {
     padding: 1.2rem;
@@ -568,5 +639,13 @@ body {
 
   .create-form-actions button {
     flex: 1;
+  }
+
+  .profile-header-main {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-header-actions {
+    justify-content: flex-start;
   }
 }
