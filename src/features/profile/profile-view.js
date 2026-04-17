@@ -92,7 +92,7 @@ function renderProfileHeader(profile, isOwnProfile) {
         <div class="profile-header-actions">
           ${
             isOwnProfile
-              ? '<button class="back-button" type="button" id="profile-edit-button" disabled>Edit Profile</button>'
+              ? '<button class="back-button" type="button" id="profile-edit-button" disabled>Edit Profile</button><button class="logout-button" type="button" id="profile-logout-button">Log Out</button>'
               : '<button class="follow-button" type="button" id="profile-follow-button">Follow</button>'
           }
           <button class="back-button" type="button" id="profile-back-button">Back to feed</button>
@@ -194,9 +194,18 @@ export function renderUserProfilePage(rootElement, profileName) {
     profileHeader.innerHTML = renderProfileHeader(profile, isOwnProfile);
 
     const backButton = profileHeader.querySelector('#profile-back-button');
+    const logoutButton = profileHeader.querySelector('#profile-logout-button');
+
     if (backButton instanceof HTMLButtonElement) {
       backButton.addEventListener('click', () => {
         window.location.hash = '#feed';
+      });
+    }
+
+    if (logoutButton instanceof HTMLButtonElement) {
+      logoutButton.addEventListener('click', () => {
+        clearAuthData();
+        window.location.hash = '#login';
       });
     }
 
@@ -363,4 +372,17 @@ export function renderUserProfilePage(rootElement, profileName) {
     profileMessage.classList.add('is-error');
     loadMoreButton.style.display = 'none';
   });
+}
+
+export function renderMyProfilePage(rootElement) {
+  const currentUser = getCurrentUser();
+  const ownProfileName = String(currentUser?.name || '');
+
+  if (!ownProfileName) {
+    clearAuthData();
+    window.location.hash = '#login';
+    return;
+  }
+
+  renderUserProfilePage(rootElement, ownProfileName);
 }

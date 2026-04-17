@@ -177,6 +177,16 @@ body {
   cursor: pointer;
 }
 
+.my-profile-button {
+  border: 1px solid #111111;
+  background: #ffffff;
+  color: #111111;
+  padding: 0.5rem 0.8rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .feed-message {
   margin: 0.3rem 0 1rem;
   color: #444444;

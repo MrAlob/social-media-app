@@ -66,6 +66,11 @@ export function createRoutes(handlers) {
       render: (rootElement) => handlers.renderUserProfilePage(rootElement),
     },
     {
+      matches: (hash) => hash === '#my-profile',
+      requiresAuth: true,
+      render: (rootElement) => handlers.renderMyProfilePage(rootElement),
+    },
+    {
       matches: () => true,
       requiresAuth: false,
       render: (rootElement) => handlers.renderLoginPage(rootElement),

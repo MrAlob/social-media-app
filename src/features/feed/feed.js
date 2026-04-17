@@ -65,6 +65,7 @@ export function renderFeedPage(rootElement) {
 					<p class="feed-subtitle">Logged in as ${safeUserName}</p>
 				</div>
         <div class="feed-actions">
+          <button class="my-profile-button" id="my-profile-button" type="button">My Profile</button>
           <button class="create-post-button" id="create-post-button" type="button">Create Post</button>
           <button class="logout-button" id="logout-button" type="button">Log Out</button>
         </div>
@@ -92,6 +93,7 @@ export function renderFeedPage(rootElement) {
   const feedMessage = rootElement.querySelector('#feed-message');
   const loadMoreButton = rootElement.querySelector('#load-more-button');
   const logoutButton = rootElement.querySelector('#logout-button');
+  const myProfileButton = rootElement.querySelector('#my-profile-button');
   const createPostButton = rootElement.querySelector('#create-post-button');
   const searchInput = rootElement.querySelector('#feed-search-input');
   const clearSearchButton = rootElement.querySelector('#feed-search-clear');
@@ -102,6 +104,7 @@ export function renderFeedPage(rootElement) {
     !feedMessage ||
     !loadMoreButton ||
     !logoutButton ||
+    !myProfileButton ||
     !createPostButton ||
     !searchInput ||
     !clearSearchButton ||
@@ -112,6 +115,10 @@ export function renderFeedPage(rootElement) {
 
   createPostButton.addEventListener('click', () => {
     window.location.hash = '#create';
+  });
+
+  myProfileButton.addEventListener('click', () => {
+    window.location.hash = '#my-profile';
   });
 
   feedGrid.addEventListener('click', (event) => {
