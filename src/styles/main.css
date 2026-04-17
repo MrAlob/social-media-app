@@ -615,6 +615,32 @@ body {
   justify-content: flex-end;
 }
 
+.follow-button {
+  border: 1px solid #0a66c2;
+  background: #0a66c2;
+  color: #ffffff;
+  padding: 0.5rem 0.8rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.follow-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.follow-button-following {
+  border-color: #888888;
+  background: #ffffff;
+  color: #333333;
+}
+
+.follow-button-following:hover:not(:disabled) {
+  border-color: #b00020;
+  color: #b00020;
+}
+
 @media (max-width: 520px) {
   .login-card {
     padding: 1.2rem;
