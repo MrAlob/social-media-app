@@ -96,3 +96,36 @@ export async function createPost({ accessToken, postData }) {
 
   return responseBody?.data || null;
 }
+
+export async function updatePost({ accessToken, postId, postData }) {
+  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
+
+  if (!accessToken) {
+    throw new Error('Access token is required');
+  }
+
+  if (!postId) {
+    throw new Error('Post id is required');
+  }
+
+  const response = await fetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}`, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'X-Noroff-API-Key': apiKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(postData),
+  });
+
+  const responseBody = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
+    const error = new Error(apiMessage || 'Failed to update post');
+    error.status = response.status;
+    throw error;
+  }
+
+  return responseBody?.data || null;
+}

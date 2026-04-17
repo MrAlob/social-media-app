@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   canAccessRoute,
   createRoutes,
+  getEditPostIdFromHash,
   getMatchingRoute,
   getPostIdFromHash,
 } from '../../src/router.js';
@@ -13,6 +14,7 @@ function buildHandlers() {
     renderFeedPage: vi.fn(),
     renderPostCreatePage: vi.fn(),
     renderPostDetailPage: vi.fn(),
+    renderPostEditPage: vi.fn(),
   };
 }
 
@@ -23,6 +25,16 @@ describe('getPostIdFromHash', () => {
 
   it('returns empty string for non-post hash', () => {
     expect(getPostIdFromHash('#feed')).toBe('');
+  });
+});
+
+describe('getEditPostIdFromHash', () => {
+  it('extracts post id from edit hash query', () => {
+    expect(getEditPostIdFromHash('#edit?id=abc-123')).toBe('abc-123');
+  });
+
+  it('returns empty string for non-edit hash', () => {
+    expect(getEditPostIdFromHash('#feed')).toBe('');
   });
 });
 
@@ -53,6 +65,18 @@ describe('createRoutes + getMatchingRoute', () => {
 
     route.render('app');
     expect(handlers.renderPostCreatePage).toHaveBeenCalledWith('app');
+  });
+
+  it('matches protected edit route', () => {
+    const handlers = buildHandlers();
+    const routes = createRoutes(handlers);
+    const route = getMatchingRoute('#edit?id=post-1', routes);
+
+    expect(route).toBeDefined();
+    expect(route.requiresAuth).toBe(true);
+
+    route.render('app');
+    expect(handlers.renderPostEditPage).toHaveBeenCalledWith('app');
   });
 
   it('falls back to default route for unknown hash', () => {

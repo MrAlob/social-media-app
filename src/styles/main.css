@@ -232,8 +232,14 @@ body {
   color: #555555;
 }
 
-.post-open-button {
+.post-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
   margin-top: 0.9rem;
+}
+
+.post-open-button {
   border: 1px solid #111111;
   background: #ffffff;
   color: #111111;
