@@ -176,12 +176,20 @@ export async function fetchProfileByName({ accessToken, profileName }) {
     throw new Error('Profile name is required');
   }
 
-  const response = await fetch(`${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'X-Noroff-API-Key': apiKey,
-    },
+  const query = new URLSearchParams({
+    _followers: 'true',
+    _following: 'true',
   });
+
+  const response = await fetch(
+    `${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}?${query.toString()}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    },
+  );
 
   const responseBody = await response.json().catch(() => ({}));
 
@@ -237,4 +245,72 @@ export async function fetchProfilePosts({ accessToken, profileName, page = 1, li
     posts: responseBody?.data || [],
     meta: responseBody?.meta || {},
   };
+}
+
+export async function followProfile({ accessToken, profileName }) {
+  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
+
+  if (!accessToken) {
+    throw new Error('Access token is required');
+  }
+
+  if (!profileName) {
+    throw new Error('Profile name is required');
+  }
+
+  const response = await fetch(
+    `${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/follow`,
+    {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    },
+  );
+
+  const responseBody = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
+    const error = new Error(apiMessage || 'Failed to follow user');
+    error.status = response.status;
+    throw error;
+  }
+
+  return responseBody?.data || null;
+}
+
+export async function unfollowProfile({ accessToken, profileName }) {
+  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
+
+  if (!accessToken) {
+    throw new Error('Access token is required');
+  }
+
+  if (!profileName) {
+    throw new Error('Profile name is required');
+  }
+
+  const response = await fetch(
+    `${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/unfollow`,
+    {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    },
+  );
+
+  const responseBody = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
+    const error = new Error(apiMessage || 'Failed to unfollow user');
+    error.status = response.status;
+    throw error;
+  }
+
+  return responseBody?.data || null;
 }

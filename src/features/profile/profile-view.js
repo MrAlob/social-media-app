@@ -1,4 +1,9 @@
-import { fetchProfileByName, fetchProfilePosts } from '../../services/api.js';
+import {
+  fetchProfileByName,
+  fetchProfilePosts,
+  followProfile,
+  unfollowProfile,
+} from '../../services/api.js';
 import { clearAuthData, getAccessToken, getCurrentUser } from '../../services/storage.js';
 import { escapeHtml, formatDate, getMediaUrl, truncateText } from '../../utils/format.js';
 
@@ -14,6 +19,31 @@ export function formatCount(value) {
   }
 
   return String(count);
+}
+
+export function isFollowingProfile(profile, currentUserName) {
+  const followers = Array.isArray(profile?.followers) ? profile.followers : [];
+
+  return followers.some((follower) => {
+    const followerName = typeof follower === 'string' ? follower : follower?.name;
+    return String(followerName || '') === String(currentUserName || '');
+  });
+}
+
+function updateFollowButton(button, isFollowing, isLoading) {
+  if (!(button instanceof HTMLButtonElement)) {
+    return;
+  }
+
+  button.disabled = isLoading;
+  button.classList.toggle('follow-button-following', isFollowing);
+
+  if (isLoading) {
+    button.textContent = isFollowing ? 'Unfollowing...' : 'Following...';
+    return;
+  }
+
+  button.textContent = isFollowing ? 'Following' : 'Follow';
 }
 
 function resolveProfileName(profileName) {
@@ -55,7 +85,7 @@ function renderProfileHeader(profile, isOwnProfile) {
           <p class="feed-subtitle">${email}</p>
           <div class="profile-stats">
             <span><strong>${postsCount}</strong> posts</span>
-            <span><strong>${followersCount}</strong> followers</span>
+            <span><strong id="profile-followers-count">${followersCount}</strong> followers</span>
             <span><strong>${followingCount}</strong> following</span>
           </div>
         </div>
@@ -63,7 +93,7 @@ function renderProfileHeader(profile, isOwnProfile) {
           ${
             isOwnProfile
               ? '<button class="back-button" type="button" id="profile-edit-button" disabled>Edit Profile</button>'
-              : ''
+              : '<button class="follow-button" type="button" id="profile-follow-button">Follow</button>'
           }
           <button class="back-button" type="button" id="profile-back-button">Back to feed</button>
         </div>
@@ -144,6 +174,8 @@ export function renderUserProfilePage(rootElement, profileName) {
 
   const currentUser = getCurrentUser();
   const isOwnProfile = String(currentUser.name || '') === String(resolvedProfileName || '');
+  let isFollowing = false;
+  let followerCount = 0;
 
   let currentPage = 1;
   let isLastPage = false;
@@ -156,6 +188,9 @@ export function renderUserProfilePage(rootElement, profileName) {
       throw new Error('Profile not found.');
     }
 
+    isFollowing = isFollowingProfile(profile, currentUser.name);
+    followerCount = Number(profile?._count?.followers || 0);
+
     profileHeader.innerHTML = renderProfileHeader(profile, isOwnProfile);
 
     const backButton = profileHeader.querySelector('#profile-back-button');
@@ -164,6 +199,69 @@ export function renderUserProfilePage(rootElement, profileName) {
         window.location.hash = '#feed';
       });
     }
+
+    if (isOwnProfile) {
+      return;
+    }
+
+    const followButton = profileHeader.querySelector('#profile-follow-button');
+    const followersCountElement = profileHeader.querySelector('#profile-followers-count');
+
+    updateFollowButton(followButton, isFollowing, false);
+
+    if (!(followButton instanceof HTMLButtonElement) || !(followersCountElement instanceof HTMLElement)) {
+      return;
+    }
+
+    followButton.addEventListener('click', async () => {
+      const previousFollowingState = isFollowing;
+      const previousFollowerCount = followerCount;
+
+      isFollowing = !isFollowing;
+      followerCount = isFollowing ? followerCount + 1 : Math.max(0, followerCount - 1);
+
+      updateFollowButton(followButton, isFollowing, true);
+      followersCountElement.textContent = formatCount(followerCount);
+
+      try {
+        const response = previousFollowingState
+          ? await unfollowProfile({ accessToken, profileName: resolvedProfileName })
+          : await followProfile({ accessToken, profileName: resolvedProfileName });
+
+        const resolvedCount = Number(response?._count?.followers);
+
+        if (Number.isFinite(resolvedCount)) {
+          followerCount = resolvedCount;
+          followersCountElement.textContent = formatCount(followerCount);
+        }
+
+        updateFollowButton(followButton, isFollowing, false);
+        profileMessage.textContent = isFollowing ? 'You are now following this user.' : 'You unfollowed this user.';
+        profileMessage.classList.remove('is-error');
+        profileMessage.classList.add('is-success');
+      } catch (error) {
+        isFollowing = previousFollowingState;
+        followerCount = previousFollowerCount;
+
+        updateFollowButton(followButton, isFollowing, false);
+        followersCountElement.textContent = formatCount(followerCount);
+
+        if (error.status === 401) {
+          clearAuthData();
+          window.location.hash = '#login';
+          return;
+        }
+
+        const messageByStatus = {
+          400: 'Could not update follow state.',
+          404: 'User not found.',
+        };
+
+        profileMessage.textContent = messageByStatus[error.status] || error.message || 'Could not update follow state.';
+        profileMessage.classList.remove('is-success');
+        profileMessage.classList.add('is-error');
+      }
+    });
   }
 
   async function loadProfilePosts() {
