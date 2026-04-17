@@ -2,7 +2,7 @@ import { fetchFeedPosts } from '../../services/api.js';
 import { clearAuthData, getAccessToken, getCurrentUser } from '../../services/storage.js';
 import { escapeHtml, formatDate, getMediaUrl, truncateText } from '../../utils/format.js';
 
-function renderPostCard(post) {
+function renderPostCard(post, currentUserName) {
   const mediaUrl = getMediaUrl(post.media);
   const postId = escapeHtml(post.id);
   const authorName = escapeHtml(post.author?.name || 'Unknown');
@@ -11,6 +11,7 @@ function renderPostCard(post) {
   const postBody = escapeHtml(truncateText(post.body));
   const commentsCount = Number(post._count?.comments || 0);
   const reactionsCount = Number(post._count?.reactions || 0);
+  const isOwner = String(post.author?.name || '') === String(currentUserName || '');
 
   return `
 		<article class="post-card" data-post-id="${postId}">
@@ -25,7 +26,14 @@ function renderPostCard(post) {
 				<span>${commentsCount} comments</span>
 				<span>${reactionsCount} reactions</span>
 			</div>
-			<button class="post-open-button" type="button" data-post-id="${postId}">Open post</button>
+      <div class="post-actions">
+        <button class="post-open-button" type="button" data-post-id="${postId}">Open post</button>
+        ${
+          isOwner
+            ? `<button class="post-open-button" type="button" data-edit-post-id="${postId}">Edit post</button>`
+            : ''
+        }
+      </div>
 		</article>
 	`;
 }
@@ -86,6 +94,18 @@ export function renderFeedPage(rootElement) {
     }
 
     const trigger = target.closest('[data-post-id]');
+    const editTrigger = target.closest('[data-edit-post-id]');
+
+    if (editTrigger) {
+      const editPostId = editTrigger.getAttribute('data-edit-post-id');
+
+      if (!editPostId) {
+        return;
+      }
+
+      window.location.hash = `#edit?id=${encodeURIComponent(editPostId)}`;
+      return;
+    }
 
     if (!trigger) {
       return;
@@ -135,7 +155,7 @@ export function renderFeedPage(rootElement) {
 
       feedGrid.insertAdjacentHTML(
         'beforeend',
-        result.posts.map((post) => renderPostCard(post)).join(''),
+        result.posts.map((post) => renderPostCard(post, currentUser.name)).join(''),
       );
 
       feedMessage.textContent = '';

@@ -4,6 +4,7 @@ import { renderLoginPage } from './features/auth/login.js';
 import { renderRegisterPage } from './features/auth/register.js';
 import { renderPostCreatePage } from './features/feed/post-create.js';
 import { renderPostDetailPage } from './features/feed/post-detail.js';
+import { renderPostEditPage } from './features/feed/post-edit.js';
 import { canAccessRoute, createRoutes, getMatchingRoute } from './router.js';
 import { getAccessToken } from './services/storage.js';
 
@@ -15,6 +16,7 @@ const routes = createRoutes({
   renderFeedPage,
   renderPostCreatePage,
   renderPostDetailPage,
+  renderPostEditPage,
 });
 
 function renderCurrentPage() {
