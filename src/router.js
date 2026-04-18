@@ -1,12 +1,11 @@
-function getHashParam(prefix, param) {
-  const hash = window.location.hash || '';
+function getHashParam(prefix, param, hash = window.location.hash || '') {
   if (!hash.startsWith(prefix)) return '';
   return new URLSearchParams(hash.split('?')[1] || '').get(param) || '';
 }
 
-export const getPostIdFromHash = () => getHashParam('#post', 'id');
-export const getEditPostIdFromHash = () => getHashParam('#edit', 'id');
-export const getProfileNameFromHash = () => getHashParam('#profile', 'name');
+export const getPostIdFromHash = (hash) => getHashParam('#post', 'id', hash);
+export const getEditPostIdFromHash = (hash) => getHashParam('#edit', 'id', hash);
+export const getProfileNameFromHash = (hash) => getHashParam('#profile', 'name', hash);
 
 export function createRoutes(handlers) {
   return [

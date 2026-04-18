@@ -3,6 +3,7 @@ import { clearAuthData, getAccessToken, getCurrentUser } from '../../services/st
 import { getMediaUrl } from '../../utils/format.js';
 import { validateMediaUrl, validatePostForm } from './post-create.js';
 import { getEditPostIdFromHash } from '../../router.js';
+export { getEditPostIdFromHash };
 
 const TITLE_MAX_LENGTH = 280;
 const BODY_MAX_LENGTH = 280;
