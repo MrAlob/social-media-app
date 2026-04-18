@@ -1,363 +1,113 @@
 import { getApiConfig } from '../config/env.js';
 
-export async function fetchFeedPosts({ accessToken, page = 1, limit = 12 }) {
-  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
+const POST_PARAMS = { _author: 'true', _comments: 'true', _reactions: 'true' };
 
-  const query = new URLSearchParams({
-    page: String(page),
-    limit: String(limit),
-    _author: 'true',
-    _comments: 'true',
-    _reactions: 'true',
-  });
+async function apiFetch(url, accessToken, options = {}) {
+  const { apiKey } = getApiConfig({ requireApiKey: true });
 
-  const response = await fetch(`${apiBaseUrl}/social/posts?${query.toString()}`, {
+  const response = await fetch(url, {
+    ...options,
     headers: {
       Authorization: `Bearer ${accessToken}`,
       'X-Noroff-API-Key': apiKey,
+      ...options.headers,
     },
   });
 
-  const responseBody = await response.json().catch(() => ({}));
+  if (response.status === 204) return null;
+
+  const body = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-    const error = new Error(apiMessage || 'Failed to load feed');
+    const message = body?.errors?.[0]?.message || body?.message;
+    const error = new Error(message || 'Request failed');
     error.status = response.status;
     throw error;
   }
 
-  return {
-    posts: responseBody?.data || [],
-    meta: responseBody?.meta || {},
-  };
+  return body;
+}
+
+export async function fetchFeedPosts({ accessToken, page = 1, limit = 12 }) {
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const query = new URLSearchParams({ page: String(page), limit: String(limit), ...POST_PARAMS });
+  const body = await apiFetch(`${apiBaseUrl}/social/posts?${query}`, accessToken);
+  return { posts: body?.data || [], meta: body?.meta || {} };
 }
 
 export async function searchPosts({ accessToken, queryText, page = 1, limit = 12 }) {
-  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
-
-  if (!accessToken) {
-    throw new Error('Access token is required');
-  }
-
   const searchQuery = String(queryText || '').trim();
 
-  if (!searchQuery) {
-    return {
-      posts: [],
-      meta: { isLastPage: true },
-    };
-  }
+  if (!searchQuery) return { posts: [], meta: { isLastPage: true } };
 
-  const query = new URLSearchParams({
-    q: searchQuery,
-    page: String(page),
-    limit: String(limit),
-    _author: 'true',
-    _comments: 'true',
-    _reactions: 'true',
-  });
-
-  const response = await fetch(`${apiBaseUrl}/social/posts/search?${query.toString()}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'X-Noroff-API-Key': apiKey,
-    },
-  });
-
-  const responseBody = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-    const error = new Error(apiMessage || 'Failed to search posts');
-    error.status = response.status;
-    throw error;
-  }
-
-  return {
-    posts: responseBody?.data || [],
-    meta: responseBody?.meta || {},
-  };
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const query = new URLSearchParams({ q: searchQuery, page: String(page), limit: String(limit), ...POST_PARAMS });
+  const body = await apiFetch(`${apiBaseUrl}/social/posts/search?${query}`, accessToken);
+  return { posts: body?.data || [], meta: body?.meta || {} };
 }
 
 export async function fetchPostById({ accessToken, postId }) {
-  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
-
-  if (!postId) {
-    throw new Error('Post id is required');
-  }
-
-  const query = new URLSearchParams({
-    _author: 'true',
-    _comments: 'true',
-    _reactions: 'true',
-  });
-
-  const response = await fetch(
-    `${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}?${query.toString()}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'X-Noroff-API-Key': apiKey,
-      },
-    },
-  );
-
-  const responseBody = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-    const error = new Error(apiMessage || 'Failed to load post');
-    error.status = response.status;
-    throw error;
-  }
-
-  return responseBody?.data || null;
+  if (!postId) throw new Error('Post id is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const query = new URLSearchParams(POST_PARAMS);
+  const body = await apiFetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}?${query}`, accessToken);
+  return body?.data || null;
 }
 
 export async function createPost({ accessToken, postData }) {
-  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
-
-  if (!accessToken) {
-    throw new Error('Access token is required');
-  }
-
-  const response = await fetch(`${apiBaseUrl}/social/posts`, {
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const body = await apiFetch(`${apiBaseUrl}/social/posts`, accessToken, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'X-Noroff-API-Key': apiKey,
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(postData),
   });
-
-  const responseBody = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-    const error = new Error(apiMessage || 'Failed to create post');
-    error.status = response.status;
-    throw error;
-  }
-
-  return responseBody?.data || null;
+  return body?.data || null;
 }
 
 export async function updatePost({ accessToken, postId, postData }) {
-  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
-
-  if (!accessToken) {
-    throw new Error('Access token is required');
-  }
-
-  if (!postId) {
-    throw new Error('Post id is required');
-  }
-
-  const response = await fetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}`, {
+  if (!postId) throw new Error('Post id is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const body = await apiFetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}`, accessToken, {
     method: 'PUT',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'X-Noroff-API-Key': apiKey,
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(postData),
   });
-
-  const responseBody = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-    const error = new Error(apiMessage || 'Failed to update post');
-    error.status = response.status;
-    throw error;
-  }
-
-  return responseBody?.data || null;
+  return body?.data || null;
 }
 
 export async function deletePost({ accessToken, postId }) {
-  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
-
-  if (!accessToken) {
-    throw new Error('Access token is required');
-  }
-
-  if (!postId) {
-    throw new Error('Post id is required');
-  }
-
-  const response = await fetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'X-Noroff-API-Key': apiKey,
-    },
-  });
-
-  if (response.status === 204) {
-    return true;
-  }
-
-  const responseBody = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-    const error = new Error(apiMessage || 'Failed to delete post');
-    error.status = response.status;
-    throw error;
-  }
-
+  if (!postId) throw new Error('Post id is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  await apiFetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}`, accessToken, { method: 'DELETE' });
   return true;
 }
 
 export async function fetchProfileByName({ accessToken, profileName }) {
-  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
-
-  if (!accessToken) {
-    throw new Error('Access token is required');
-  }
-
-  if (!profileName) {
-    throw new Error('Profile name is required');
-  }
-
-  const query = new URLSearchParams({
-    _followers: 'true',
-    _following: 'true',
-  });
-
-  const response = await fetch(
-    `${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}?${query.toString()}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'X-Noroff-API-Key': apiKey,
-      },
-    },
-  );
-
-  const responseBody = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-    const error = new Error(apiMessage || 'Failed to load profile');
-    error.status = response.status;
-    throw error;
-  }
-
-  return responseBody?.data || null;
+  if (!profileName) throw new Error('Profile name is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const query = new URLSearchParams({ _followers: 'true', _following: 'true' });
+  const body = await apiFetch(`${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}?${query}`, accessToken);
+  return body?.data || null;
 }
 
 export async function fetchProfilePosts({ accessToken, profileName, page = 1, limit = 12 }) {
-  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
-
-  if (!accessToken) {
-    throw new Error('Access token is required');
-  }
-
-  if (!profileName) {
-    throw new Error('Profile name is required');
-  }
-
-  const query = new URLSearchParams({
-    page: String(page),
-    limit: String(limit),
-    _author: 'true',
-    _comments: 'true',
-    _reactions: 'true',
-  });
-
-  const response = await fetch(
-    `${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/posts?${query.toString()}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'X-Noroff-API-Key': apiKey,
-      },
-    },
-  );
-
-  const responseBody = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-    const error = new Error(apiMessage || 'Failed to load profile posts');
-    error.status = response.status;
-    throw error;
-  }
-
-  return {
-    posts: responseBody?.data || [],
-    meta: responseBody?.meta || {},
-  };
+  if (!profileName) throw new Error('Profile name is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const query = new URLSearchParams({ page: String(page), limit: String(limit), ...POST_PARAMS });
+  const body = await apiFetch(`${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/posts?${query}`, accessToken);
+  return { posts: body?.data || [], meta: body?.meta || {} };
 }
 
 export async function followProfile({ accessToken, profileName }) {
-  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
-
-  if (!accessToken) {
-    throw new Error('Access token is required');
-  }
-
-  if (!profileName) {
-    throw new Error('Profile name is required');
-  }
-
-  const response = await fetch(
-    `${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/follow`,
-    {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'X-Noroff-API-Key': apiKey,
-      },
-    },
-  );
-
-  const responseBody = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-    const error = new Error(apiMessage || 'Failed to follow user');
-    error.status = response.status;
-    throw error;
-  }
-
-  return responseBody?.data || null;
+  if (!profileName) throw new Error('Profile name is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const body = await apiFetch(`${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/follow`, accessToken, { method: 'PUT' });
+  return body?.data || null;
 }
 
 export async function unfollowProfile({ accessToken, profileName }) {
-  const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
-
-  if (!accessToken) {
-    throw new Error('Access token is required');
-  }
-
-  if (!profileName) {
-    throw new Error('Profile name is required');
-  }
-
-  const response = await fetch(
-    `${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/unfollow`,
-    {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'X-Noroff-API-Key': apiKey,
-      },
-    },
-  );
-
-  const responseBody = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-    const error = new Error(apiMessage || 'Failed to unfollow user');
-    error.status = response.status;
-    throw error;
-  }
-
-  return responseBody?.data || null;
+  if (!profileName) throw new Error('Profile name is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const body = await apiFetch(`${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/unfollow`, accessToken, { method: 'PUT' });
+  return body?.data || null;
 }

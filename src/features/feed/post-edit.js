@@ -2,19 +2,10 @@ import { fetchPostById, updatePost } from '../../services/api.js';
 import { clearAuthData, getAccessToken, getCurrentUser } from '../../services/storage.js';
 import { getMediaUrl } from '../../utils/format.js';
 import { validateMediaUrl, validatePostForm } from './post-create.js';
+import { getEditPostIdFromHash } from '../../router.js';
 
 const TITLE_MAX_LENGTH = 280;
 const BODY_MAX_LENGTH = 280;
-
-export function getEditPostIdFromHash(hashValue = window.location.hash || '') {
-  if (!hashValue.startsWith('#edit')) {
-    return '';
-  }
-
-  const queryString = hashValue.split('?')[1] || '';
-  const params = new URLSearchParams(queryString);
-  return params.get('id') || '';
-}
 
 export function validatePostOwnership(post, currentUser) {
   const postOwner = post?.author?.name || '';
@@ -159,7 +150,7 @@ function buildUi(rootElement) {
   };
 }
 
-export function renderPostEditPage(rootElement) {
+export async function renderPostEditPage(rootElement) {
   if (!rootElement) {
     return;
   }
@@ -264,46 +255,42 @@ export function renderPostEditPage(rootElement) {
   const currentUser = getCurrentUser();
   let initialSnapshot = '';
 
-  fetchPostById({ accessToken, postId })
-    .then((post) => {
-      if (!post) {
-        loadMessage.textContent = 'Post not found.';
-        loadMessage.classList.add('is-error');
-        return;
-      }
+  try {
+    const post = await fetchPostById({ accessToken, postId });
 
-      if (!validatePostOwnership(post, currentUser)) {
-        ui.form.hidden = true;
-        loadMessage.textContent = 'You can only edit your own posts.';
-        loadMessage.classList.add('is-error');
-
-        setTimeout(() => {
-          window.location.hash = '#feed';
-        }, 900);
-        return;
-      }
-
-      fillForm(ui, postToFormValues(post));
-      loadMessage.textContent = '';
-      ui.form.hidden = false;
-      initialSnapshot = JSON.stringify(getFormValues(ui.form));
-    })
-    .catch((error) => {
-      if (error.status === 401) {
-        clearAuthData();
-        window.location.hash = '#login';
-        return;
-      }
-
-      if (error.status === 404) {
-        loadMessage.textContent = 'Post not found.';
-        loadMessage.classList.add('is-error');
-        return;
-      }
-
-      loadMessage.textContent = error.message || 'Could not load post for editing.';
+    if (!post) {
+      loadMessage.textContent = 'Post not found.';
       loadMessage.classList.add('is-error');
-    });
+      return;
+    }
+
+    if (!validatePostOwnership(post, currentUser)) {
+      ui.form.hidden = true;
+      loadMessage.textContent = 'You can only edit your own posts.';
+      loadMessage.classList.add('is-error');
+      setTimeout(() => { window.location.hash = '#feed'; }, 900);
+      return;
+    }
+
+    fillForm(ui, postToFormValues(post));
+    loadMessage.textContent = '';
+    ui.form.hidden = false;
+    initialSnapshot = JSON.stringify(getFormValues(ui.form));
+  } catch (error) {
+    if (error.status === 401) {
+      clearAuthData();
+      window.location.hash = '#login';
+      return;
+    }
+    if (error.status === 404) {
+      loadMessage.textContent = 'Post not found.';
+      loadMessage.classList.add('is-error');
+      return;
+    }
+    loadMessage.textContent = error.message || 'Could not load post for editing.';
+    loadMessage.classList.add('is-error');
+    return;
+  }
 
   ui.titleInput.addEventListener('input', () => {
     setCounter(ui.titleInput, ui.titleCounter, TITLE_MAX_LENGTH);

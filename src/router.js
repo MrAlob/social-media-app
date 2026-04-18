@@ -1,80 +1,24 @@
-export function getPostIdFromHash(hashValue = window.location.hash || '') {
-  if (!hashValue.startsWith('#post')) {
-    return '';
-  }
-
-  const queryString = hashValue.split('?')[1] || '';
-  const params = new URLSearchParams(queryString);
-  return params.get('id') || '';
+function getHashParam(prefix, param) {
+  const hash = window.location.hash || '';
+  if (!hash.startsWith(prefix)) return '';
+  return new URLSearchParams(hash.split('?')[1] || '').get(param) || '';
 }
 
-export function getEditPostIdFromHash(hashValue = window.location.hash || '') {
-  if (!hashValue.startsWith('#edit')) {
-    return '';
-  }
-
-  const queryString = hashValue.split('?')[1] || '';
-  const params = new URLSearchParams(queryString);
-  return params.get('id') || '';
-}
-
-export function getProfileNameFromHash(hashValue = window.location.hash || '') {
-  if (!hashValue.startsWith('#profile')) {
-    return '';
-  }
-
-  const queryString = hashValue.split('?')[1] || '';
-  const params = new URLSearchParams(queryString);
-  return params.get('name') || '';
-}
+export const getPostIdFromHash = () => getHashParam('#post', 'id');
+export const getEditPostIdFromHash = () => getHashParam('#edit', 'id');
+export const getProfileNameFromHash = () => getHashParam('#profile', 'name');
 
 export function createRoutes(handlers) {
   return [
-    {
-      matches: (hash) => hash === '#login' || hash === '',
-      requiresAuth: false,
-      render: (rootElement) => handlers.renderLoginPage(rootElement),
-    },
-    {
-      matches: (hash) => hash === '#register',
-      requiresAuth: false,
-      render: (rootElement) => handlers.renderRegisterPage(rootElement),
-    },
-    {
-      matches: (hash) => hash === '#feed',
-      requiresAuth: true,
-      render: (rootElement) => handlers.renderFeedPage(rootElement),
-    },
-    {
-      matches: (hash) => hash === '#create',
-      requiresAuth: true,
-      render: (rootElement) => handlers.renderPostCreatePage(rootElement),
-    },
-    {
-      matches: (hash) => hash.startsWith('#post'),
-      requiresAuth: true,
-      render: (rootElement) => handlers.renderPostDetailPage(rootElement, getPostIdFromHash()),
-    },
-    {
-      matches: (hash) => hash.startsWith('#edit'),
-      requiresAuth: true,
-      render: (rootElement) => handlers.renderPostEditPage(rootElement),
-    },
-    {
-      matches: (hash) => hash.startsWith('#profile'),
-      requiresAuth: true,
-      render: (rootElement) => handlers.renderUserProfilePage(rootElement),
-    },
-    {
-      matches: (hash) => hash === '#my-profile',
-      requiresAuth: true,
-      render: (rootElement) => handlers.renderMyProfilePage(rootElement),
-    },
-    {
-      matches: () => true,
-      requiresAuth: false,
-      render: (rootElement) => handlers.renderLoginPage(rootElement),
-    },
+    { matches: (hash) => hash === '#login' || hash === '', requiresAuth: false, render: handlers.renderLoginPage },
+    { matches: (hash) => hash === '#register', requiresAuth: false, render: handlers.renderRegisterPage },
+    { matches: (hash) => hash === '#feed', requiresAuth: true, render: handlers.renderFeedPage },
+    { matches: (hash) => hash === '#create', requiresAuth: true, render: handlers.renderPostCreatePage },
+    { matches: (hash) => hash.startsWith('#post'), requiresAuth: true, render: (el) => handlers.renderPostDetailPage(el, getPostIdFromHash()) },
+    { matches: (hash) => hash.startsWith('#edit'), requiresAuth: true, render: handlers.renderPostEditPage },
+    { matches: (hash) => hash.startsWith('#profile'), requiresAuth: true, render: handlers.renderUserProfilePage },
+    { matches: (hash) => hash === '#my-profile', requiresAuth: true, render: handlers.renderMyProfilePage },
+    { matches: () => true, requiresAuth: false, render: handlers.renderLoginPage },
   ];
 }
 
@@ -83,9 +27,6 @@ export function getMatchingRoute(hash, routes) {
 }
 
 export function canAccessRoute(route, hasToken) {
-  if (!route?.requiresAuth) {
-    return true;
-  }
-
+  if (!route?.requiresAuth) return true;
   return Boolean(hasToken);
 }
