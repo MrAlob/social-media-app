@@ -1,0 +1,270 @@
+.field-label {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.field-input {
+  width: 100%;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #000000;
+  padding: 0.7rem 0.8rem;
+  font-size: 1rem;
+}
+
+.field-input:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.field-error {
+  margin: -0.35rem 0 0;
+  min-height: 1rem;
+  color: #ffb3b3;
+  font-size: 0.85rem;
+}
+
+.submit-button {
+  margin-top: 0.25rem;
+  width: 100%;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  background: #000000;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.7rem 0.8rem;
+  cursor: pointer;
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.form-message {
+  margin: 0.3rem 0 0;
+  min-height: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #ffffff;
+}
+
+.form-message.is-error {
+  color: #ffb3b3;
+}
+
+.form-message.is-success {
+  color: #b9ffb9;
+}
+
+.back-button {
+  border: 1px solid #111111;
+  background: #ffffff;
+  color: #111111;
+  padding: 0.5rem 0.8rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.post-card {
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #ffffff;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: #666666;
+}
+
+.post-author {
+  margin: 0;
+  font-weight: 700;
+  color: #111111;
+}
+
+.post-author-button {
+  border: 0;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: #111111;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.post-date {
+  margin: 0;
+}
+
+.post-title {
+  margin: 0 0 0.4rem;
+  font-size: 1.1rem;
+  color: #111111;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.post-body {
+  margin: 0 0 0.75rem;
+  color: #333333;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.post-media {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 0.7rem;
+  object-fit: cover;
+}
+
+.post-meta {
+  display: flex;
+  gap: 0.8rem;
+  font-size: 0.85rem;
+  color: #555555;
+}
+
+.post-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+
+.post-open-button {
+  border: 1px solid #111111;
+  background: #ffffff;
+  color: #111111;
+  padding: 0.45rem 0.7rem;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.post-delete-button {
+  border: 1px solid #b00020;
+  background: #ffffff;
+  color: #b00020;
+  padding: 0.45rem 0.7rem;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.post-delete-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.load-more-button {
+  display: block;
+  margin: 1rem auto 0;
+  border: 1px solid #111111;
+  background: #111111;
+  color: #ffffff;
+  padding: 0.6rem 0.9rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.confirm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgb(0 0 0 / 50%);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.confirm-modal {
+  width: min(100%, 420px);
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.confirm-modal-icon {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.confirm-modal-title {
+  margin: 0.4rem 0 0;
+  color: #111111;
+}
+
+.confirm-modal-message {
+  margin: 0.5rem 0 0;
+  color: #333333;
+  line-height: 1.4;
+}
+
+.confirm-modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.confirm-modal-cancel,
+.confirm-modal-confirm {
+  border: 1px solid #111111;
+  background: #ffffff;
+  color: #111111;
+  padding: 0.45rem 0.7rem;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.confirm-modal-confirm.is-danger {
+  border-color: #b00020;
+  background: #b00020;
+  color: #ffffff;
+}
+
+.follow-button {
+  border: 1px solid #0a66c2;
+  background: #0a66c2;
+  color: #ffffff;
+  padding: 0.5rem 0.8rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.follow-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.follow-button-following {
+  border-color: #888888;
+  background: #ffffff;
+  color: #333333;
+}
+
+.follow-button-following:hover:not(:disabled) {
+  border-color: #b00020;
+  color: #b00020;
+}
