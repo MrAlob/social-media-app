@@ -111,3 +111,53 @@ export async function unfollowProfile({ accessToken, profileName }) {
   const body = await apiFetch(`${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/unfollow`, accessToken, { method: 'PUT' });
   return body?.data || null;
 }
+
+/**
+ * Adds a comment to a post.
+ * @param {{ accessToken: string, postId: string|number, commentBody: string }} params
+ * @returns {Promise<object|null>} The created comment data.
+ */
+export async function createComment({ accessToken, postId, commentBody }) {
+  if (!postId) throw new Error('Post id is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const body = await apiFetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}/comment`, accessToken, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ body: commentBody, replyToId: null }),
+  });
+  return body?.data || null;
+}
+
+/**
+ * Adds a reply to an existing comment on a post.
+ * @param {{ accessToken: string, postId: string|number, commentId: string, replyBody: string }} params
+ * @returns {Promise<object|null>} The created reply data.
+ */
+export async function createCommentReply({ accessToken, postId, commentId, replyBody }) {
+  if (!postId) throw new Error('Post id is required');
+  if (!commentId) throw new Error('Comment id is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const body = await apiFetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}/comment`, accessToken, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ body: replyBody, replyToId: commentId }),
+  });
+  return body?.data || null;
+}
+
+/**
+ * Reacts to a post with an emoji symbol. Calling with the same emoji toggles the reaction off.
+ * @param {{ accessToken: string, postId: string|number, symbol: string }} params
+ * @returns {Promise<object|null>} The updated post data with reactions.
+ */
+export async function reactToPost({ accessToken, postId, symbol }) {
+  if (!postId) throw new Error('Post id is required');
+  if (!symbol) throw new Error('Reaction symbol is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const body = await apiFetch(
+    `${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}/react/${encodeURIComponent(symbol)}`,
+    accessToken,
+    { method: 'PUT' },
+  );
+  return body?.data || null;
+}
