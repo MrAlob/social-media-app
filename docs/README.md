@@ -1,4 +1,4 @@
-# Code Flow Visualization
+# Code Flow Visualization created by Claude code
 
 This folder contains a visual map of how the social media app is organized and how data and control move through the app.
 
