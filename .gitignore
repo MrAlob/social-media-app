@@ -15,6 +15,7 @@ dist-ssr
 # Editor directories and files
 .vscode
 .github
+.claude
 .agents
 .tmp
 .env
@@ -32,7 +33,5 @@ test-results/
 playwright-report/
 
 # Allow CI workflows to be committed
-!.github/
-!.github/workflows/
 !.github/workflows/*.yml
 

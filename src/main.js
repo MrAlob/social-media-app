@@ -1,35 +1,42 @@
-import "./styles/main.css";
-import { renderFeedPage } from "./features/feed/feed.js";
-import { renderLoginPage } from "./features/auth/login.js";
-import { renderRegisterPage } from "./features/auth/register.js";
-import { renderPostDetailPage } from "./features/feed/post-detail.js";
-import { canAccessRoute, createRoutes, getMatchingRoute } from "./router.js";
-import { getAccessToken } from "./services/storage.js";
+import './styles/main.css';
+import { renderFeedPage } from './features/feed/feed.js';
+import { renderLoginPage } from './features/auth/login.js';
+import { renderRegisterPage } from './features/auth/register.js';
+import { renderPostCreatePage } from './features/feed/post-create.js';
+import { renderPostDetailPage } from './features/feed/post-detail.js';
+import { renderPostEditPage } from './features/feed/post-edit.js';
+import { renderMyProfilePage, renderUserProfilePage } from './features/profile/profile-view.js';
+import { canAccessRoute, createRoutes, getMatchingRoute } from './router.js';
+import { getAccessToken } from './services/storage.js';
 
-const app = document.querySelector("#app");
+const app = document.querySelector('#app');
 
 const routes = createRoutes({
-	renderLoginPage,
-	renderRegisterPage,
-	renderFeedPage,
-	renderPostDetailPage,
+  renderLoginPage,
+  renderRegisterPage,
+  renderFeedPage,
+  renderPostCreatePage,
+  renderPostDetailPage,
+  renderPostEditPage,
+  renderUserProfilePage,
+  renderMyProfilePage,
 });
 
 function renderCurrentPage() {
-	if (!app) {
-		return;
-	}
+  if (!app) {
+    return;
+  }
 
-	const hash = window.location.hash || "#login";
-	const route = getMatchingRoute(hash, routes);
+  const hash = window.location.hash || '#login';
+  const route = getMatchingRoute(hash, routes);
 
-	if (!canAccessRoute(route, getAccessToken())) {
-		window.location.hash = "#login";
-		return;
-	}
+  if (!canAccessRoute(route, getAccessToken())) {
+    window.location.hash = '#login';
+    return;
+  }
 
-	route.render(app);
+  route.render(app);
 }
 
-window.addEventListener("hashchange", renderCurrentPage);
+window.addEventListener('hashchange', renderCurrentPage);
 renderCurrentPage();

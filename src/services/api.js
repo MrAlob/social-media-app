@@ -1,66 +1,113 @@
-import { getApiConfig } from "../config/env.js";
+import { getApiConfig } from '../config/env.js';
+
+const POST_PARAMS = { _author: 'true', _comments: 'true', _reactions: 'true' };
+
+async function apiFetch(url, accessToken, options = {}) {
+  const { apiKey } = getApiConfig({ requireApiKey: true });
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'X-Noroff-API-Key': apiKey,
+      ...options.headers,
+    },
+  });
+
+  if (response.status === 204) return null;
+
+  const body = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const message = body?.errors?.[0]?.message || body?.message;
+    const error = new Error(message || 'Request failed');
+    error.status = response.status;
+    throw error;
+  }
+
+  return body;
+}
 
 export async function fetchFeedPosts({ accessToken, page = 1, limit = 12 }) {
-	const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const query = new URLSearchParams({ page: String(page), limit: String(limit), ...POST_PARAMS });
+  const body = await apiFetch(`${apiBaseUrl}/social/posts?${query}`, accessToken);
+  return { posts: body?.data || [], meta: body?.meta || {} };
+}
 
-	const query = new URLSearchParams({
-		page: String(page),
-		limit: String(limit),
-		_author: "true",
-		_comments: "true",
-		_reactions: "true",
-	});
+export async function searchPosts({ accessToken, queryText, page = 1, limit = 12 }) {
+  const searchQuery = String(queryText || '').trim();
 
-	const response = await fetch(`${apiBaseUrl}/social/posts?${query.toString()}`, {
-		headers: {
-			Authorization: `Bearer ${accessToken}`,
-			"X-Noroff-API-Key": apiKey,
-		},
-	});
+  if (!searchQuery) return { posts: [], meta: { isLastPage: true } };
 
-	const responseBody = await response.json().catch(() => ({}));
-
-	if (!response.ok) {
-		const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-		const error = new Error(apiMessage || "Failed to load feed");
-		error.status = response.status;
-		throw error;
-	}
-
-	return {
-		posts: responseBody?.data || [],
-		meta: responseBody?.meta || {},
-	};
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const query = new URLSearchParams({ q: searchQuery, page: String(page), limit: String(limit), ...POST_PARAMS });
+  const body = await apiFetch(`${apiBaseUrl}/social/posts/search?${query}`, accessToken);
+  return { posts: body?.data || [], meta: body?.meta || {} };
 }
 
 export async function fetchPostById({ accessToken, postId }) {
-	const { apiBaseUrl, apiKey } = getApiConfig({ requireApiKey: true });
+  if (!postId) throw new Error('Post id is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const query = new URLSearchParams(POST_PARAMS);
+  const body = await apiFetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}?${query}`, accessToken);
+  return body?.data || null;
+}
 
-	if (!postId) {
-		throw new Error("Post id is required");
-	}
+export async function createPost({ accessToken, postData }) {
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const body = await apiFetch(`${apiBaseUrl}/social/posts`, accessToken, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(postData),
+  });
+  return body?.data || null;
+}
 
-	const query = new URLSearchParams({
-		_author: "true",
-		_comments: "true",
-		_reactions: "true",
-	});
+export async function updatePost({ accessToken, postId, postData }) {
+  if (!postId) throw new Error('Post id is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const body = await apiFetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}`, accessToken, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(postData),
+  });
+  return body?.data || null;
+}
 
-	const response = await fetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}?${query.toString()}`, {
-		headers: {
-			Authorization: `Bearer ${accessToken}`,
-			"X-Noroff-API-Key": apiKey,
-		},
-	});
+export async function deletePost({ accessToken, postId }) {
+  if (!postId) throw new Error('Post id is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  await apiFetch(`${apiBaseUrl}/social/posts/${encodeURIComponent(postId)}`, accessToken, { method: 'DELETE' });
+  return true;
+}
 
-	const responseBody = await response.json().catch(() => ({}));
+export async function fetchProfileByName({ accessToken, profileName }) {
+  if (!profileName) throw new Error('Profile name is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const query = new URLSearchParams({ _followers: 'true', _following: 'true' });
+  const body = await apiFetch(`${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}?${query}`, accessToken);
+  return body?.data || null;
+}
 
-	if (!response.ok) {
-		const apiMessage = responseBody?.errors?.[0]?.message || responseBody?.message;
-		const error = new Error(apiMessage || "Failed to load post");
-		error.status = response.status;
-		throw error;
-	}
+export async function fetchProfilePosts({ accessToken, profileName, page = 1, limit = 12 }) {
+  if (!profileName) throw new Error('Profile name is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const query = new URLSearchParams({ page: String(page), limit: String(limit), ...POST_PARAMS });
+  const body = await apiFetch(`${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/posts?${query}`, accessToken);
+  return { posts: body?.data || [], meta: body?.meta || {} };
+}
 
-	return responseBody?.data || null;
+export async function followProfile({ accessToken, profileName }) {
+  if (!profileName) throw new Error('Profile name is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const body = await apiFetch(`${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/follow`, accessToken, { method: 'PUT' });
+  return body?.data || null;
+}
+
+export async function unfollowProfile({ accessToken, profileName }) {
+  if (!profileName) throw new Error('Profile name is required');
+  const { apiBaseUrl } = getApiConfig({ requireApiKey: true });
+  const body = await apiFetch(`${apiBaseUrl}/social/profiles/${encodeURIComponent(profileName)}/unfollow`, accessToken, { method: 'PUT' });
+  return body?.data || null;
 }

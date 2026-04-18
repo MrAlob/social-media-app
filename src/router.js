@@ -1,51 +1,31 @@
-export function getPostIdFromHash(hashValue = window.location.hash || "") {
-	if (!hashValue.startsWith("#post")) {
-		return "";
-	}
-
-	const queryString = hashValue.split("?")[1] || "";
-	const params = new URLSearchParams(queryString);
-	return params.get("id") || "";
+function getHashParam(prefix, param, hash = window.location.hash || '') {
+  if (!hash.startsWith(prefix)) return '';
+  return new URLSearchParams(hash.split('?')[1] || '').get(param) || '';
 }
 
+export const getPostIdFromHash = (hash) => getHashParam('#post', 'id', hash);
+export const getEditPostIdFromHash = (hash) => getHashParam('#edit', 'id', hash);
+export const getProfileNameFromHash = (hash) => getHashParam('#profile', 'name', hash);
+
 export function createRoutes(handlers) {
-	return [
-		{
-			matches: (hash) => hash === "#login" || hash === "",
-			requiresAuth: false,
-			render: (rootElement) => handlers.renderLoginPage(rootElement),
-		},
-		{
-			matches: (hash) => hash === "#register",
-			requiresAuth: false,
-			render: (rootElement) => handlers.renderRegisterPage(rootElement),
-		},
-		{
-			matches: (hash) => hash === "#feed",
-			requiresAuth: true,
-			render: (rootElement) => handlers.renderFeedPage(rootElement),
-		},
-		{
-			matches: (hash) => hash.startsWith("#post"),
-			requiresAuth: true,
-			render: (rootElement) => handlers.renderPostDetailPage(rootElement, getPostIdFromHash()),
-		},
-		{
-			matches: () => true,
-			requiresAuth: false,
-			render: (rootElement) => handlers.renderLoginPage(rootElement),
-		},
-	];
+  return [
+    { matches: (hash) => hash === '#login' || hash === '', requiresAuth: false, render: handlers.renderLoginPage },
+    { matches: (hash) => hash === '#register', requiresAuth: false, render: handlers.renderRegisterPage },
+    { matches: (hash) => hash === '#feed', requiresAuth: true, render: handlers.renderFeedPage },
+    { matches: (hash) => hash === '#create', requiresAuth: true, render: handlers.renderPostCreatePage },
+    { matches: (hash) => hash.startsWith('#post'), requiresAuth: true, render: (el) => handlers.renderPostDetailPage(el, getPostIdFromHash()) },
+    { matches: (hash) => hash.startsWith('#edit'), requiresAuth: true, render: handlers.renderPostEditPage },
+    { matches: (hash) => hash.startsWith('#profile'), requiresAuth: true, render: handlers.renderUserProfilePage },
+    { matches: (hash) => hash === '#my-profile', requiresAuth: true, render: handlers.renderMyProfilePage },
+    { matches: () => true, requiresAuth: false, render: handlers.renderLoginPage },
+  ];
 }
 
 export function getMatchingRoute(hash, routes) {
-	return routes.find((route) => route.matches(hash));
+  return routes.find((route) => route.matches(hash));
 }
 
 export function canAccessRoute(route, hasToken) {
-	if (!route?.requiresAuth) {
-		return true;
-	}
-
-	return Boolean(hasToken);
+  if (!route?.requiresAuth) return true;
+  return Boolean(hasToken);
 }
