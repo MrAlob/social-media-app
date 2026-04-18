@@ -15,6 +15,7 @@ dist-ssr
 # Editor directories and files
 .vscode
 .github
+.claude
 .agents
 .tmp
 .env
