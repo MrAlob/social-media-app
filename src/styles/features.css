@@ -31,6 +31,33 @@
   font-weight: 700;
 }
 
+.login-gloss-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.login-gloss-button::after {
+  position: absolute;
+  top: -50%;
+  left: -75%;
+  width: 35%;
+  height: 200%;
+  background: rgb(255 255 255 / 35%);
+  content: '';
+  pointer-events: none;
+  transform: skewX(-20deg);
+}
+
+.login-gloss-button:hover::after {
+  animation: login-gloss-sweep 650ms ease-out 1;
+}
+
+@keyframes login-gloss-sweep {
+  to {
+    left: 140%;
+  }
+}
+
 /* Feed */
 
 .feed-page {

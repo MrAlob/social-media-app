@@ -19,3 +19,15 @@ This file records AI assistance used while completing the CSS frameworks assignm
 - **Tool used:** GitHub Copilot
 - **Purpose:** Investigate the Playwright browser failure after confirming that a local browser was already installed.
 - **Outcome:** Found that Playwright's cached headless shell was incomplete, configured the existing E2E setup to use the installed Google Chrome channel, and verified that all three browser tests pass.
+
+- **Tool used:** ChatGPT
+- **Purpose:** Get help creating a `curl` request for testing the Noroff API, including how to send the API key in the request headers and inspect the response.
+- **Outcome:** Created a command-line example for checking the API connection and understanding whether the environment variables and API key were working before testing the application.
+
+- **Tool used:** ChatGPT
+- **Purpose:** Brainstorm a simple Tailwind animation for the login screen without changing the existing markup structure, validation, or JavaScript behavior.
+- **Outcome:** Added a named card entrance animation, subtle input focus transitions, and a register-link hover transition.
+
+- **Tool used:** ChatGPT
+- **Purpose:** Plan a one-time diagonal gloss effect for the login button when the user hovers over it.
+- **Outcome:** Added a scoped CSS element animation that sweeps across the button once per hover without changing the submit behavior.
