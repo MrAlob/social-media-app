@@ -245,15 +245,15 @@ export function renderPostCreatePage(rootElement) {
 	}
 
 	rootElement.innerHTML = `
-		<main class="feed-page">
+		<main class="feed-page bg-slate-50">
 			<header class="detail-topbar create-topbar">
 				<button class="back-button" id="create-cancel-top" type="button">Cancel</button>
 				<h1 class="feed-title">Create Post</h1>
 			</header>
 
-			<section class="post-detail-card" aria-labelledby="create-post-title">
+			<section class="post-detail-card max-w-2xl shadow-sm" aria-labelledby="create-post-title">
 				<h2 id="create-post-title" class="post-detail-title">New Post</h2>
-				<form id="create-post-form" class="create-post-form" novalidate>
+				<form id="create-post-form" class="create-post-form">
 					<label class="field-label create-field-label" for="create-title">Title</label>
 					<input
 						id="create-title"
@@ -261,7 +261,7 @@ export function renderPostCreatePage(rootElement) {
 						type="text"
 						maxlength="${TITLE_MAX_LENGTH}"
 						required
-						class="field-input create-field-input"
+						class="field-input create-field-input shadow-sm"
 						placeholder="Write a title"
 					/>
 					<p class="character-counter" id="title-counter">0/${TITLE_MAX_LENGTH}</p>
@@ -272,7 +272,7 @@ export function renderPostCreatePage(rootElement) {
 						id="create-body"
 						name="body"
 						maxlength="${BODY_MAX_LENGTH}"
-						class="field-input create-field-input create-textarea"
+						class="field-input create-field-input create-textarea shadow-sm"
 						placeholder="What is on your mind?"
 					></textarea>
 					<p class="character-counter" id="body-counter">0/${BODY_MAX_LENGTH}</p>
@@ -283,7 +283,7 @@ export function renderPostCreatePage(rootElement) {
 						id="create-tags"
 						name="tags"
 						type="text"
-						class="field-input create-field-input"
+						class="field-input create-field-input shadow-sm"
 						placeholder="javascript,frontend,school"
 					/>
 					<p class="field-hint">Use comma-separated tags and avoid spaces in each tag.</p>
@@ -294,12 +294,12 @@ export function renderPostCreatePage(rootElement) {
 						id="create-media"
 						name="media"
 						type="url"
-						class="field-input create-field-input"
+						class="field-input create-field-input shadow-sm"
 						placeholder="https://example.com/image.jpg"
 					/>
 					<p class="field-error create-field-error" data-error-for="media" aria-live="polite"></p>
 
-					<section class="media-preview" aria-live="polite">
+					<section class="media-preview shadow-inner" aria-live="polite">
 						<p class="field-hint" id="preview-message">Enter an image URL to preview media.</p>
 						<img id="preview-image" class="post-detail-media" alt="Media preview" hidden />
 					</section>

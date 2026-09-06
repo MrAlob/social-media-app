@@ -17,7 +17,7 @@ function renderPostCard(post, currentUserName) {
   const isOwner = String(post.author?.name || '') === String(currentUserName || '');
 
   return `
-		<article class="post-card" data-post-id="${postId}">
+    <article class="post-card shadow-sm transition-shadow hover:shadow-md" data-post-id="${postId}">
 			<div class="post-header">
         <button class="post-author-button" type="button" data-profile-name="${authorName}">${authorName}</button>
 				<p class="post-date">${postDate}</p>
@@ -58,7 +58,7 @@ export function renderFeedPage(rootElement) {
   const safeUserName = escapeHtml(currentUser.name || 'User');
 
   rootElement.innerHTML = `
-		<main class="feed-page">
+    <main class="feed-page bg-slate-50">
 			<header class="feed-topbar">
 				<div>
 					<h1 class="feed-title">Feed</h1>
@@ -71,7 +71,7 @@ export function renderFeedPage(rootElement) {
         </div>
 			</header>
 
-      <section class="feed-search" aria-label="Search posts">
+      <section class="feed-search rounded-lg bg-white p-3 shadow-sm" aria-label="Search posts">
         <input
           id="feed-search-input"
           class="field-input feed-search-input"

@@ -7,13 +7,13 @@ export function renderLoginPage(rootElement) {
   }
 
   rootElement.innerHTML = `
-		<main class="page">
-			<section class="login-card" aria-labelledby="login-title">
-				<h1 id="login-title" class="title">Log In</h1>
-				<form class="login-form" id="login-form" novalidate>
+    <main class="page bg-slate-100">
+      <section class="login-card max-w-md shadow-xl" aria-labelledby="login-title">
+        <h1 id="login-title" class="title tracking-tight">Log In</h1>
+        <form class="login-form" id="login-form">
 					<label class="field-label" for="email">Email</label>
 					<input
-						class="field-input"
+            class="field-input shadow-sm"
 						id="email"
 						name="email"
 						type="email"
@@ -25,7 +25,7 @@ export function renderLoginPage(rootElement) {
 
 					<label class="field-label" for="password">Password</label>
 					<input
-						class="field-input"
+            class="field-input shadow-sm"
 						id="password"
 						name="password"
 						type="password"
