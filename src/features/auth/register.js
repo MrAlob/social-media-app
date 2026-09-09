@@ -7,12 +7,12 @@ export function renderRegisterPage(rootElement) {
 
   rootElement.innerHTML = `
 		<main class="page">
-			<section class="login-card" aria-labelledby="register-title">
+      <section class="login-card bg-slate-800/60 shadow-2xl shadow-slate-900/25 ring-1 ring-inset ring-white/20 backdrop-blur-xl" aria-labelledby="register-title">
 				<h1 id="register-title" class="title">Register</h1>
 				<form class="login-form" id="register-form" novalidate>
 					<label class="field-label" for="name">Name</label>
 					<input
-						class="field-input"
+            class="field-input border-white/65 bg-white/55 text-slate-900 shadow-sm backdrop-blur-md"
 						id="name"
 						name="name"
 						type="text"
@@ -24,7 +24,7 @@ export function renderRegisterPage(rootElement) {
 
 					<label class="field-label" for="email">Email</label>
 					<input
-						class="field-input"
+            class="field-input border-white/65 bg-white/55 text-slate-900 shadow-sm backdrop-blur-md"
 						id="email"
 						name="email"
 						type="email"
@@ -36,7 +36,7 @@ export function renderRegisterPage(rootElement) {
 
 					<label class="field-label" for="password">Password</label>
 					<input
-						class="field-input"
+            class="field-input border-white/65 bg-white/55 text-slate-900 shadow-sm backdrop-blur-md"
 						id="password"
 						name="password"
 						type="password"
@@ -46,7 +46,7 @@ export function renderRegisterPage(rootElement) {
 					/>
 					<p class="field-error" data-error-for="password" aria-live="polite"></p>
 
-					<button class="submit-button" id="register-submit" type="submit">Create account</button>
+          <button class="submit-button border-white/60 bg-white/35 text-slate-900" id="register-submit" type="submit">Create account</button>
 					<p class="form-message" id="register-message" aria-live="polite"></p>
 				</form>
 				<p class="register-text">

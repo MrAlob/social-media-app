@@ -8,12 +8,12 @@ export function renderLoginPage(rootElement) {
 
   rootElement.innerHTML = `
     <main class="page overflow-hidden bg-slate-100">
-      <section class="login-card animate-login-card-in max-w-md shadow-xl" aria-labelledby="login-title">
+      <section class="login-card animate-login-card-in max-w-md bg-slate-800/60 shadow-2xl shadow-slate-900/25 ring-1 ring-inset ring-white/20 backdrop-blur-xl" aria-labelledby="login-title">
         <h1 id="login-title" class="title tracking-tight">Log In</h1>
         <form class="login-form" id="login-form">
 					<label class="field-label" for="email">Email</label>
 					<input
-            class="field-input shadow-sm transition duration-200 focus:scale-[1.01]"
+            class="field-input border-white/65 bg-white/55 text-slate-900 shadow-sm backdrop-blur-md transition duration-200 focus:scale-[1.01]"
 						id="email"
 						name="email"
 						type="email"
@@ -25,7 +25,7 @@ export function renderLoginPage(rootElement) {
 
 					<label class="field-label" for="password">Password</label>
 					<input
-            class="field-input shadow-sm transition duration-200 focus:scale-[1.01]"
+            class="field-input border-white/65 bg-white/55 text-slate-900 shadow-sm backdrop-blur-md transition duration-200 focus:scale-[1.01]"
 						id="password"
 						name="password"
 						type="password"
@@ -34,7 +34,7 @@ export function renderLoginPage(rootElement) {
 						required
 					/>
 					<p class="field-error" data-error-for="password" aria-live="polite"></p>
-          <button class="submit-button login-gloss-button" id="login-submit" type="submit">Log In</button>
+          <button class="submit-button login-gloss-button border-white/60 bg-white/25 text-white" id="login-submit" type="submit">Log In</button>
 					<p class="form-message" id="login-message" aria-live="polite"></p>
 				</form>
 				<p class="register-text">

@@ -2,8 +2,6 @@
 
 .login-card {
   width: min(100%, 440px);
-  background: #000000;
-  border: 1px solid #000000;
   border-radius: 8px;
   padding: 1.5rem;
 }
@@ -65,6 +63,8 @@
   max-width: 1000px;
   margin: 0 auto;
   padding: 1rem;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 24%), transparent 45%), rgb(148 163 184 / 22%);
 }
 
 .feed-topbar {
@@ -88,8 +88,6 @@
 }
 
 .logout-button {
-  border: 1px solid #111111;
-  background: #ffffff;
   color: #111111;
   padding: 0.5rem 0.8rem;
   font-weight: 700;
@@ -119,9 +117,6 @@
 }
 
 .create-post-button {
-  border: 1px solid #111111;
-  background: #111111;
-  color: #ffffff;
   padding: 0.5rem 0.8rem;
   font-weight: 700;
   border-radius: 4px;
@@ -129,8 +124,6 @@
 }
 
 .my-profile-button {
-  border: 1px solid #111111;
-  background: #ffffff;
   color: #111111;
   padding: 0.5rem 0.8rem;
   font-weight: 700;
@@ -165,10 +158,9 @@
 }
 
 .post-detail-card {
-  border: 1px solid #dddddd;
   border-radius: 8px;
   padding: 1rem;
-  background: #ffffff;
+  animation: card-rise 450ms ease-out both;
 }
 
 .post-detail-header {
@@ -221,11 +213,10 @@
 }
 
 .post-detail-tags li {
-  border: 1px solid #cccccc;
   border-radius: 999px;
   padding: 0.2rem 0.55rem;
   font-size: 0.85rem;
-  color: #333333;
+  color: #334155;
 }
 
 .post-detail-counts {
@@ -259,10 +250,8 @@
 
 .detail-reaction-item,
 .detail-comment-item {
-  border: 1px solid #eeeeee;
   border-radius: 6px;
   padding: 0.5rem 0.65rem;
-  background: #fafafa;
 }
 
 .detail-comment-head {
@@ -328,11 +317,9 @@
 }
 
 .media-preview {
-  border: 1px dashed #cccccc;
   border-radius: 6px;
   padding: 0.8rem;
   margin-top: 0.3rem;
-  background: #fbfbfb;
 }
 
 .create-form-actions {
@@ -345,8 +332,6 @@
 .create-submit-button {
   width: auto;
   margin-top: 0;
-  border-color: #111111;
-  background: #111111;
 }
 
 .create-form-message {
@@ -357,11 +342,10 @@
 /* Profile */
 
 .profile-header-card {
-  border: 1px solid #dddddd;
   border-radius: 8px;
-  background: #ffffff;
   overflow: hidden;
   margin-bottom: 1rem;
+  animation: card-rise 450ms ease-out both;
 }
 
 .profile-banner {

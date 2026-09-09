@@ -177,11 +177,11 @@ export async function renderPostEditPage(rootElement) {
   rootElement.innerHTML = `
     <main class="feed-page">
       <header class="detail-topbar create-topbar">
-        <button class="back-button" id="edit-cancel-top" type="button">Cancel</button>
+        <button class="back-button border-white/75 bg-white/45 backdrop-blur-md" id="edit-cancel-top" type="button">Cancel</button>
         <h1 class="feed-title">Edit Post</h1>
       </header>
 
-      <section class="post-detail-card" aria-labelledby="edit-post-title">
+      <section class="post-detail-card border-white/70 bg-white/35 shadow-lg shadow-slate-900/10 backdrop-blur-xl" aria-labelledby="edit-post-title">
         <h2 id="edit-post-title" class="post-detail-title">Update your post</h2>
         <p class="feed-message" id="edit-load-message" aria-live="polite">Loading post...</p>
 
@@ -193,7 +193,7 @@ export async function renderPostEditPage(rootElement) {
             type="text"
             maxlength="${TITLE_MAX_LENGTH}"
             required
-            class="field-input create-field-input"
+            class="field-input create-field-input border-white/65 bg-white/55 text-slate-900 shadow-sm backdrop-blur-md"
             placeholder="Write a title"
           />
           <p class="character-counter" id="edit-title-counter">0/${TITLE_MAX_LENGTH}</p>
@@ -204,7 +204,7 @@ export async function renderPostEditPage(rootElement) {
             id="edit-body"
             name="body"
             maxlength="${BODY_MAX_LENGTH}"
-            class="field-input create-field-input create-textarea"
+            class="field-input create-field-input create-textarea border-white/65 bg-white/55 text-slate-900 shadow-sm backdrop-blur-md"
             placeholder="What is on your mind?"
           ></textarea>
           <p class="character-counter" id="edit-body-counter">0/${BODY_MAX_LENGTH}</p>
@@ -215,7 +215,7 @@ export async function renderPostEditPage(rootElement) {
             id="edit-tags"
             name="tags"
             type="text"
-            class="field-input create-field-input"
+            class="field-input create-field-input border-white/65 bg-white/55 text-slate-900 shadow-sm backdrop-blur-md"
             placeholder="javascript,frontend,school"
           />
           <p class="field-hint">Use comma-separated tags and avoid spaces in each tag.</p>
@@ -226,19 +226,19 @@ export async function renderPostEditPage(rootElement) {
             id="edit-media"
             name="media"
             type="url"
-            class="field-input create-field-input"
+            class="field-input create-field-input border-white/65 bg-white/55 text-slate-900 shadow-sm backdrop-blur-md"
             placeholder="https://example.com/image.jpg"
           />
           <p class="field-error create-field-error" data-edit-error-for="media" aria-live="polite"></p>
 
-          <section class="media-preview" aria-live="polite">
+          <section class="media-preview border border-white/65 bg-white/42 shadow-inner backdrop-blur-lg" aria-live="polite">
             <p class="field-hint" id="edit-preview-message">Enter an image URL to preview media.</p>
             <img id="edit-preview-image" class="post-detail-media" alt="Media preview" hidden />
           </section>
 
           <div class="create-form-actions">
-            <button class="back-button" id="edit-cancel-bottom" type="button">Cancel</button>
-            <button class="submit-button create-submit-button" id="edit-submit" type="submit">Update Post</button>
+            <button class="back-button border-white/75 bg-white/45 backdrop-blur-md" id="edit-cancel-bottom" type="button">Cancel</button>
+            <button class="submit-button create-submit-button border-white/70 bg-white/35 text-slate-900" id="edit-submit" type="submit">Update Post</button>
           </div>
           <p class="form-message create-form-message" id="edit-message" aria-live="polite"></p>
         </form>
@@ -269,7 +269,9 @@ export async function renderPostEditPage(rootElement) {
       ui.form.hidden = true;
       loadMessage.textContent = 'You can only edit your own posts.';
       loadMessage.classList.add('is-error');
-      setTimeout(() => { window.location.hash = '#feed'; }, 900);
+      setTimeout(() => {
+        window.location.hash = '#feed';
+      }, 900);
       return;
     }
 

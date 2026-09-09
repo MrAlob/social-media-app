@@ -10,7 +10,8 @@ export function showConfirmDialog({
     backdrop.className = 'confirm-modal-backdrop';
 
     const dialog = document.createElement('div');
-    dialog.className = 'confirm-modal';
+    dialog.className =
+      'confirm-modal border-white/80 bg-white/72 shadow-2xl shadow-slate-900/20 backdrop-blur-xl';
     dialog.setAttribute('role', 'dialog');
     dialog.setAttribute('aria-modal', 'true');
     dialog.setAttribute('aria-label', title);
@@ -20,8 +21,8 @@ export function showConfirmDialog({
       <h2 class="confirm-modal-title"></h2>
       <p class="confirm-modal-message"></p>
       <div class="confirm-modal-actions">
-        <button type="button" class="confirm-modal-cancel">${cancelText}</button>
-        <button type="button" class="confirm-modal-confirm${danger ? ' is-danger' : ''}">${confirmText}</button>
+        <button type="button" class="confirm-modal-cancel border-white/75 bg-white/48 backdrop-blur-md">${cancelText}</button>
+        <button type="button" class="confirm-modal-confirm border-white/75 bg-white/48 backdrop-blur-md${danger ? ' is-danger' : ''}">${confirmText}</button>
       </div>
     `;
 

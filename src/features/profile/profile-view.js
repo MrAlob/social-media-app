@@ -72,7 +72,7 @@ function renderProfileHeader(profile, isOwnProfile) {
   const followingCount = formatCount(profile?._count?.following || 0);
 
   return `
-    <section class="profile-header-card">
+    <section class="profile-header-card border-white/70 bg-white/35 shadow-lg shadow-slate-900/10 backdrop-blur-xl">
       <div class="profile-banner" style="background-image: ${bannerUrl ? `url('${bannerUrl}')` : 'linear-gradient(135deg, #f1f5f9, #dbeafe)'}"></div>
       <div class="profile-header-main">
         ${
@@ -92,10 +92,10 @@ function renderProfileHeader(profile, isOwnProfile) {
         <div class="profile-header-actions">
           ${
             isOwnProfile
-              ? '<button class="back-button" type="button" id="profile-edit-button" disabled>Edit Profile</button><button class="logout-button" type="button" id="profile-logout-button">Log Out</button>'
-              : '<button class="follow-button" type="button" id="profile-follow-button">Follow</button>'
+              ? '<button class="back-button border-white/75 bg-white/45 backdrop-blur-md" type="button" id="profile-edit-button" disabled>Edit Profile</button><button class="logout-button border-white/75 bg-white/48 backdrop-blur-md" type="button" id="profile-logout-button">Log Out</button>'
+              : '<button class="follow-button border-blue-300/70 bg-blue-500/20 backdrop-blur-md" type="button" id="profile-follow-button">Follow</button>'
           }
-          <button class="back-button" type="button" id="profile-back-button">Back to feed</button>
+          <button class="back-button border-white/75 bg-white/45 backdrop-blur-md" type="button" id="profile-back-button">Back to feed</button>
         </div>
       </div>
     </section>
@@ -112,7 +112,7 @@ function renderUserPostCard(post) {
   const reactionsCount = Number(post?._count?.reactions || 0);
 
   return `
-    <article class="post-card" data-profile-post-id="${postId}">
+    <article class="post-card border-white/70 bg-white/35 shadow-lg shadow-slate-900/10 backdrop-blur-xl" data-profile-post-id="${postId}">
       <div class="post-header">
         <p class="post-author">${escapeHtml(post?.author?.name || 'Unknown')}</p>
         <p class="post-date">${created}</p>
@@ -125,7 +125,7 @@ function renderUserPostCard(post) {
         <span>${reactionsCount} reactions</span>
       </div>
       <div class="post-actions">
-        <button class="post-open-button" type="button" data-post-id="${postId}">Open post</button>
+        <button class="post-open-button border-white/75 bg-white/48 backdrop-blur-md" type="button" data-post-id="${postId}">Open post</button>
       </div>
     </article>
   `;
@@ -159,7 +159,7 @@ export function renderUserProfilePage(rootElement, profileName) {
       <p class="feed-message" id="profile-message" aria-live="polite">Loading profile...</p>
       <section id="profile-header"></section>
       <section class="feed-grid" id="profile-posts"></section>
-      <button class="load-more-button" id="profile-load-more" type="button">Load More</button>
+      <button class="load-more-button border-white/70 bg-white/35 text-slate-900 backdrop-blur-md" id="profile-load-more" type="button">Load More</button>
     </main>
   `;
 
@@ -218,7 +218,10 @@ export function renderUserProfilePage(rootElement, profileName) {
 
     updateFollowButton(followButton, isFollowing, false);
 
-    if (!(followButton instanceof HTMLButtonElement) || !(followersCountElement instanceof HTMLElement)) {
+    if (
+      !(followButton instanceof HTMLButtonElement) ||
+      !(followersCountElement instanceof HTMLElement)
+    ) {
       return;
     }
 
@@ -245,7 +248,9 @@ export function renderUserProfilePage(rootElement, profileName) {
         }
 
         updateFollowButton(followButton, isFollowing, false);
-        profileMessage.textContent = isFollowing ? 'You are now following this user.' : 'You unfollowed this user.';
+        profileMessage.textContent = isFollowing
+          ? 'You are now following this user.'
+          : 'You unfollowed this user.';
         profileMessage.classList.remove('is-error');
         profileMessage.classList.add('is-success');
       } catch (error) {
@@ -266,7 +271,8 @@ export function renderUserProfilePage(rootElement, profileName) {
           404: 'User not found.',
         };
 
-        profileMessage.textContent = messageByStatus[error.status] || error.message || 'Could not update follow state.';
+        profileMessage.textContent =
+          messageByStatus[error.status] || error.message || 'Could not update follow state.';
         profileMessage.classList.remove('is-success');
         profileMessage.classList.add('is-error');
       }

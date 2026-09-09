@@ -6,10 +6,7 @@
 
 .field-input {
   width: 100%;
-  border: 1px solid #ffffff;
   border-radius: 4px;
-  background: #ffffff;
-  color: #000000;
   padding: 0.7rem 0.8rem;
   font-size: 1rem;
 }
@@ -29,10 +26,7 @@
 .submit-button {
   margin-top: 0.25rem;
   width: 100%;
-  border: 1px solid #ffffff;
   border-radius: 4px;
-  background: #000000;
-  color: #ffffff;
   font-weight: 700;
   font-size: 1rem;
   padding: 0.7rem 0.8rem;
@@ -61,8 +55,6 @@
 }
 
 .back-button {
-  border: 1px solid #111111;
-  background: #ffffff;
   color: #111111;
   padding: 0.5rem 0.8rem;
   font-weight: 700;
@@ -71,10 +63,25 @@
 }
 
 .post-card {
-  border: 1px solid #dddddd;
   border-radius: 8px;
   padding: 1rem;
-  background: #ffffff;
+  animation: card-rise 450ms ease-out both;
+}
+
+button {
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .post-header {
@@ -149,8 +156,6 @@
 }
 
 .post-open-button {
-  border: 1px solid #111111;
-  background: #ffffff;
   color: #111111;
   padding: 0.45rem 0.7rem;
   border-radius: 4px;
@@ -176,9 +181,6 @@
 .load-more-button {
   display: block;
   margin: 1rem auto 0;
-  border: 1px solid #111111;
-  background: #111111;
-  color: #ffffff;
   padding: 0.6rem 0.9rem;
   font-weight: 700;
   border-radius: 4px;
@@ -197,8 +199,6 @@
 
 .confirm-modal {
   width: min(100%, 420px);
-  background: #ffffff;
-  border: 1px solid #dddddd;
   border-radius: 8px;
   padding: 1rem;
 }
@@ -228,8 +228,6 @@
 
 .confirm-modal-cancel,
 .confirm-modal-confirm {
-  border: 1px solid #111111;
-  background: #ffffff;
   color: #111111;
   padding: 0.45rem 0.7rem;
   border-radius: 4px;
@@ -244,8 +242,6 @@
 }
 
 .follow-button {
-  border: 1px solid #0a66c2;
-  background: #0a66c2;
   color: #ffffff;
   padding: 0.5rem 0.8rem;
   font-weight: 700;
@@ -259,8 +255,6 @@
 }
 
 .follow-button-following {
-  border-color: #888888;
-  background: #ffffff;
   color: #333333;
 }
 
