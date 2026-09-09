@@ -5,7 +5,10 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #ffffff;
+  background:
+    radial-gradient(circle at 10% 15%, rgb(129 140 248 / 35%), transparent 30%),
+    radial-gradient(circle at 90% 85%, rgb(56 189 248 / 38%), transparent 30%),
+    linear-gradient(135deg, #c7d2fe, #dbeafe 48%, #bae6fd);
   min-height: 100vh;
 }
 
@@ -14,4 +17,7 @@ body {
   padding: 1rem;
   display: grid;
   place-items: center;
+  background:
+    radial-gradient(circle at 15% 20%, rgb(129 140 248 / 35%), transparent 32%),
+    radial-gradient(circle at 85% 80%, rgb(56 189 248 / 30%), transparent 30%), #e2e8f0;
 }

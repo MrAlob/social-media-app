@@ -17,7 +17,7 @@ function renderPostCard(post, currentUserName) {
   const isOwner = String(post.author?.name || '') === String(currentUserName || '');
 
   return `
-		<article class="post-card" data-post-id="${postId}">
+    <article class="post-card border-white/70 bg-white/35 shadow-lg shadow-slate-900/10 backdrop-blur-xl transition-shadow hover:shadow-md" data-post-id="${postId}">
 			<div class="post-header">
         <button class="post-author-button" type="button" data-profile-name="${authorName}">${authorName}</button>
 				<p class="post-date">${postDate}</p>
@@ -30,11 +30,11 @@ function renderPostCard(post, currentUserName) {
 				<span>${reactionsCount} reactions</span>
 			</div>
       <div class="post-actions">
-        <button class="post-open-button" type="button" data-post-id="${postId}">Open post</button>
+        <button class="post-open-button border-white/75 bg-white/48 backdrop-blur-md" type="button" data-post-id="${postId}">Open post</button>
         ${
           isOwner
-            ? `<button class="post-open-button" type="button" data-edit-post-id="${postId}">Edit post</button>
-               <button class="post-delete-button" type="button" data-delete-post-id="${postId}" data-post-title="${postTitle}">Delete</button>`
+            ? `<button class="post-open-button border-white/75 bg-white/48 backdrop-blur-md" type="button" data-edit-post-id="${postId}">Edit post</button>
+              <button class="post-delete-button border-red-300/70 bg-red-500/20 backdrop-blur-md" type="button" data-delete-post-id="${postId}" data-post-title="${postTitle}">Delete</button>`
             : ''
         }
       </div>
@@ -58,20 +58,20 @@ export function renderFeedPage(rootElement) {
   const safeUserName = escapeHtml(currentUser.name || 'User');
 
   rootElement.innerHTML = `
-		<main class="feed-page">
+    <main class="feed-page bg-slate-50">
 			<header class="feed-topbar">
 				<div>
 					<h1 class="feed-title">Feed</h1>
 					<p class="feed-subtitle">Logged in as ${safeUserName}</p>
 				</div>
         <div class="feed-actions">
-          <button class="my-profile-button" id="my-profile-button" type="button">My Profile</button>
-          <button class="create-post-button" id="create-post-button" type="button">Create Post</button>
-          <button class="logout-button" id="logout-button" type="button">Log Out</button>
+          <button class="my-profile-button border-white/75 bg-white/48 backdrop-blur-md" id="my-profile-button" type="button">My Profile</button>
+          <button class="create-post-button border-white/70 bg-white/35 text-slate-900 backdrop-blur-md" id="create-post-button" type="button">Create Post</button>
+          <button class="logout-button border-white/75 bg-white/48 backdrop-blur-md" id="logout-button" type="button">Log Out</button>
         </div>
 			</header>
 
-      <section class="feed-search" aria-label="Search posts">
+      <section class="feed-search rounded-lg border border-white/65 bg-white/42 p-3 shadow-inner backdrop-blur-lg" aria-label="Search posts">
         <input
           id="feed-search-input"
           class="field-input feed-search-input"
@@ -79,13 +79,13 @@ export function renderFeedPage(rootElement) {
           placeholder="Search posts..."
           autocomplete="off"
         />
-        <button id="feed-search-clear" class="back-button feed-search-clear" type="button" hidden>Clear</button>
+        <button id="feed-search-clear" class="back-button feed-search-clear border-white/75 bg-white/45 backdrop-blur-md" type="button" hidden>Clear</button>
       </section>
       <p class="feed-subtitle" id="feed-search-result"></p>
 
 			<p class="feed-message" id="feed-message" aria-live="polite"></p>
 			<section class="feed-grid" id="feed-grid"></section>
-			<button class="load-more-button" id="load-more-button" type="button">Load More</button>
+      <button class="load-more-button border-white/70 bg-white/35 text-slate-900 backdrop-blur-md" id="load-more-button" type="button">Load More</button>
 		</main>
 	`;
 
@@ -197,7 +197,8 @@ export function renderFeedPage(rootElement) {
             404: 'Post not found.',
           };
 
-          feedMessage.textContent = messageByStatus[error.status] || error.message || 'Could not delete post.';
+          feedMessage.textContent =
+            messageByStatus[error.status] || error.message || 'Could not delete post.';
           feedMessage.classList.remove('is-success');
           feedMessage.classList.add('is-error');
 

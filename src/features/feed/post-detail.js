@@ -12,7 +12,8 @@ function renderComments(comments = []) {
     <ul class="detail-comments-list">
       ${comments
         .map((comment) => {
-          const ownerName = typeof comment.owner === 'string' ? comment.owner : (comment.owner?.name ?? 'Unknown');
+          const ownerName =
+            typeof comment.owner === 'string' ? comment.owner : (comment.owner?.name ?? 'Unknown');
           const owner = escapeHtml(ownerName);
           const body = escapeHtml(comment.body || '');
           const created = escapeHtml(formatDateTime(comment.created));
@@ -64,7 +65,7 @@ function renderPostDetail(post, currentUser) {
   const postId = escapeHtml(post?.id || '');
 
   return `
-    <article class="post-detail-card">
+    <article class="post-detail-card border-white/70 bg-white/35 shadow-lg shadow-slate-900/10 backdrop-blur-xl">
       <header class="post-detail-header">
         <button class="post-author-button" type="button" data-profile-name="${authorName}">${authorName}</button>
         <p class="post-detail-email">${authorEmail}</p>
@@ -75,8 +76,8 @@ function renderPostDetail(post, currentUser) {
       ${
         isOwner
           ? `<div class="post-actions">
-              <button class="post-open-button" type="button" data-edit-post-id="${postId}">Edit post</button>
-              <button class="post-delete-button" type="button" data-delete-post-id="${postId}" data-post-title="${escapeHtml(rawTitle)}">Delete</button>
+              <button class="post-open-button border-white/75 bg-white/48 backdrop-blur-md" type="button" data-edit-post-id="${postId}">Edit post</button>
+              <button class="post-delete-button border-red-300/70 bg-red-500/20 backdrop-blur-md" type="button" data-delete-post-id="${postId}" data-post-title="${escapeHtml(rawTitle)}">Delete</button>
             </div>`
           : ''
       }
@@ -86,7 +87,7 @@ function renderPostDetail(post, currentUser) {
 
       ${
         safeTags.length > 0
-          ? `<ul class="post-detail-tags">${safeTags.map((tag) => `<li>#${tag}</li>`).join('')}</ul>`
+          ? `<ul class="post-detail-tags">${safeTags.map((tag) => `<li class="border-white/75 bg-white/35 backdrop-blur-md">#${tag}</li>`).join('')}</ul>`
           : ''
       }
 
@@ -122,7 +123,7 @@ export async function renderPostDetailPage(rootElement, postId) {
   rootElement.innerHTML = `
     <main class="feed-page">
       <header class="detail-topbar">
-        <button class="back-button" id="back-to-feed" type="button">Back to feed</button>
+        <button class="back-button border-white/75 bg-white/45 backdrop-blur-md" id="back-to-feed" type="button">Back to feed</button>
       </header>
       <p class="feed-message" id="post-detail-message" aria-live="polite">Loading post...</p>
       <section id="post-detail-content"></section>
@@ -211,7 +212,8 @@ export async function renderPostDetailPage(rootElement, postId) {
       }
 
       const messageByStatus = { 403: 'You can only delete your own post.', 404: 'Post not found.' };
-      messageElement.textContent = messageByStatus[error.status] || error.message || 'Could not delete post.';
+      messageElement.textContent =
+        messageByStatus[error.status] || error.message || 'Could not delete post.';
       messageElement.classList.remove('is-success');
       messageElement.classList.add('is-error');
       deleteButton.disabled = false;
