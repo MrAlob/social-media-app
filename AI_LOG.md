@@ -2,8 +2,6 @@
 
 This file records AI assistance used while completing the CSS frameworks assignment. Each entry describes the assistance received and the outcome. I review and understand any code changes before keeping them.
 
-## 6 September 2026
-
 - **Tool used:** ChatGPT
 - **Purpose:** Regain context after time away from the assignment by reading the repository, summarising its structure and current functionality, and brainstorming a clear approach for meeting the CSS framework requirements.
 - **Outcome:** Created a simple staged plan for adding Tailwind through npm, styling three existing pages incrementally, and checking native form validation before making code changes.
